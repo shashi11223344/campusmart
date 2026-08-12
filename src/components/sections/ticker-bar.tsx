@@ -4,7 +4,7 @@ import { useSiteContent } from '../../contexts/SiteContentContext';
 
 const TickerBar = () => {
     const { content } = useSiteContent();
-    const announcements = content.ticker_announcements || [
+    const announcements = (Array.isArray(content.ticker_announcements) ? content.ticker_announcements : null) || [
         "Digital Transformation Summit: 15 May 2026",
         "New AI-Powered Learning Stations now available for pre-order",
         "Join our upcoming Campus Design Webinar on 15th April 2026",

@@ -3,117 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
-}
-
-
-model User {
-  id              Int      @id @default(autoincrement())
-  name            String
-  email           String   @unique
-  passwordHash    String
-  phone           String?
-  institution     String?
-  role            String   @default("user") // "user" | "admin"
-  emailVerified   Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  orders       Order[]
-  wishlist     WishlistItem[]
-  addresses    Address[]
-  classifieds  Classified[]
-}
-
-model Category {
-  id       Int       @id @default(autoincrement())
-  name     String
-  slug     String    @unique
-  products Product[]
-}
-
-model Product {
-  id             Int      @id @default(autoincrement())
-  name           String
-  slug           String   @unique
-  sku            String?  @unique
-  description    String?
-  price          Float
-  categoryId     Int
-  imageUrl       String?
-  images         String?  // JSON array of URLs
-  specifications String?  // JSON object of specs
-  rating         Float    @default(0)
-  reviewCount    Int      @default(0)
-  stock          Int      @default(100)
-  active         Boolean  @default(true)
-  featured       Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  category     Category       @relation(fields: [categoryId], references: [id])
-  orderItems   OrderItem[]
-  wishlistItems WishlistItem[]
-}
-
-model BlogPost {
-  id          Int      @id @default(autoincrement())
-  title       String
-  slug        String   @unique
-  excerpt     String
-  body        String
-  categoryId  Int?
-  imageUrl    String?
-  published   Boolean  @default(false)
-  publishedAt DateTime?
-  authorId    Int?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  category    BlogCategory? @relation(fields: [categoryId], references: [id])
-}
-
-model BlogCategory {
-  id    Int        @id @default(autoincrement())
-  name  String
-  slug  String     @unique
-  posts BlogPost[]
-}
-
-model Order {
-  id        Int         @id @default(autoincrement())
-  userId    Int
-  total     Float
-  status    String      @default("pending") // pending | processing | shipped | delivered | cancelled
-  notes     String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  user      User        @relation(fields: [userId], references: [id])
-  items     OrderItem[]
-}
-
-model OrderItem {
-  id        Int     @id @default(autoincrement())
-  orderId   Int
-  productId Int
-  qty       Int
-  unitPrice Float
-
-  order   Order   @relation(fields: [orderId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-}
-
-model WishlistItem {
-  id        Int     @id @default(autoincrement())
-  userId    Int
-  productId Int
-
-  user    User    @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-
-  @@unique([userId, productId])
 }
 
 model Address {
@@ -126,8 +17,73 @@ model Address {
   state     String
   pincode   String
   isDefault Boolean @default(false)
+  user      User    @relation(fields: [userId], references: [id], map: "Address_userId_fkey")
 
-  user User @relation(fields: [userId], references: [id])
+  @@index([userId], map: "Address_userId_fkey")
+  @@map("address")
+}
+
+model BlogCategory {
+  id       Int        @id @default(autoincrement())
+  name     String
+  slug     String     @unique(map: "BlogCategory_slug_key")
+  blogpost BlogPost[]
+
+  @@map("blogcategory")
+}
+
+model BlogPost {
+  id           Int           @id @default(autoincrement())
+  title        String
+  slug         String        @unique(map: "BlogPost_slug_key")
+  excerpt      String
+  body         String        @db.Text
+  categoryId   Int?
+  imageUrl     String?
+  published    Boolean       @default(false)
+  publishedAt  DateTime?
+  authorId     Int?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  blogcategory BlogCategory? @relation(fields: [categoryId], references: [id], map: "BlogPost_categoryId_fkey")
+
+  @@index([categoryId], map: "BlogPost_categoryId_fkey")
+  @@map("blogpost")
+}
+
+model Catalogue {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String?
+  fileUrl      String
+  thumbnailUrl String?
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@map("catalogue")
+}
+
+model Category {
+  id      Int       @id @default(autoincrement())
+  name    String
+  slug    String    @unique(map: "Category_slug_key")
+  product Product[]
+
+  @@map("category")
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  role      String
+  content   String
+  intent    String?
+  metadata  String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "ChatMessage_userId_fkey")
+
+  @@index([userId, createdAt], map: "ChatMessage_userId_createdAt_idx")
+  @@map("chatmessage")
 }
 
 model Classified {
@@ -137,11 +93,13 @@ model Classified {
   description String
   price       Float?
   imageUrl    String?
-  status      String   @default("pending") // pending | approved | rejected
+  status      String   @default("pending")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], map: "Classified_userId_fkey")
 
-  user User @relation(fields: [userId], references: [id])
+  @@index([userId], map: "Classified_userId_fkey")
+  @@map("classified")
 }
 
 model ContactEnquiry {
@@ -153,6 +111,90 @@ model ContactEnquiry {
   message   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+
+  @@map("contactenquiry")
+}
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  userId    Int
+  total     Float
+  status    String      @default("pending")
+  notes     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  user      User        @relation(fields: [userId], references: [id], map: "Order_userId_fkey")
+  orderitem OrderItem[]
+
+  @@index([userId], map: "Order_userId_fkey")
+  @@map("order")
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  qty       Int
+  unitPrice Float
+  order     Order   @relation(fields: [orderId], references: [id], map: "OrderItem_orderId_fkey")
+  product   Product @relation(fields: [productId], references: [id], map: "OrderItem_productId_fkey")
+
+  @@index([orderId], map: "OrderItem_orderId_fkey")
+  @@index([productId], map: "OrderItem_productId_fkey")
+  @@map("orderitem")
+}
+
+model OtpCode {
+  id        Int      @id @default(autoincrement())
+  email     String
+  code      String
+  purpose   String   @default("verify")
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email], map: "OtpCode_email_idx")
+  @@map("otpcode")
+}
+
+model Page {
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String   @unique(map: "Page_slug_key")
+  content   String?
+  template  String?
+  pageData  String?
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("page")
+}
+
+model Product {
+  id             Int            @id @default(autoincrement())
+  name           String
+  slug           String         @unique(map: "Product_slug_key")
+  sku            String?        @unique(map: "Product_sku_key")
+  description    String?
+  price          Float
+  categoryId     Int
+  imageUrl       String?
+  images         String?
+  specifications String?
+  rating         Float          @default(0)
+  reviewCount    Int            @default(0)
+  stock          Int            @default(100)
+  active         Boolean        @default(true)
+  featured       Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  orderitem      OrderItem[]
+  category       Category       @relation(fields: [categoryId], references: [id], map: "Product_categoryId_fkey")
+  wishlistitem   WishlistItem[]
+
+  @@index([categoryId], map: "Product_categoryId_fkey")
+  @@map("product")
 }
 
 model QuoteRequest {
@@ -165,45 +207,47 @@ model QuoteRequest {
   message     String
   read        Boolean  @default(false)
   createdAt   DateTime @default(now())
-}
 
-model Catalogue {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  fileUrl     String
-  thumbnailUrl String?
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  @@map("quoterequest")
 }
 
 model SiteContent {
   id        Int      @id @default(autoincrement())
-  key       String   @unique
+  key       String   @unique(map: "SiteContent_key_key")
   value     String
   updatedAt DateTime @updatedAt
+
+  @@map("sitecontent")
 }
 
-model Page {
-  id          Int      @id @default(autoincrement())
-  title       String
-  slug        String   @unique
-  content     String?  // HTML content for standard rich text pages
-  template    String?  // Reference to React static components (e.g., 'ai-ml', 'home')
-  pageData    String?  // Flexible JSON data to hydrate specific templates
-  published   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model User {
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique(map: "User_email_key")
+  passwordHash  String
+  phone         String?
+  institution   String?
+  role          String         @default("user")
+  emailVerified Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  address       Address[]
+  chatmessage   ChatMessage[]
+  classified    Classified[]
+  order         Order[]
+  wishlistitem  WishlistItem[]
+
+  @@map("user")
 }
 
-model OtpCode {
-  id        Int      @id @default(autoincrement())
-  email     String
-  code      String
-  purpose   String   @default("verify") // "verify" | "login"
-  expiresAt DateTime
-  used      Boolean  @default(false)
-  createdAt DateTime @default(now())
+model WishlistItem {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], map: "WishlistItem_productId_fkey")
+  user      User    @relation(fields: [userId], references: [id], map: "WishlistItem_userId_fkey")
 
-  @@index([email])
+  @@unique([userId, productId], map: "WishlistItem_userId_productId_key")
+  @@index([productId], map: "WishlistItem_productId_fkey")
+  @@map("wishlistitem")
 }

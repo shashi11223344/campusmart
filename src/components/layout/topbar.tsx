@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { Mail, Phone, Facebook, Twitter, Youtube, Instagram, Linkedin } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const TopBar = () => {
   const topBarRef = useRef<HTMLDivElement>(null);
@@ -40,6 +40,18 @@ const TopBar = () => {
 
     return () => ctx.revert();
   }, []);
+
+  const navigate = useNavigate();
+  const storedUser = localStorage.getItem('cm_user');
+  const currentUser = storedUser ? JSON.parse(storedUser) : null;
+  const isLoggedIn = !!localStorage.getItem('cm_token') && !!currentUser;
+  const userName = currentUser?.name || currentUser?.email || '';
+
+  const handleLogout = () => {
+    localStorage.removeItem('cm_token');
+    localStorage.removeItem('cm_user');
+    navigate('/');
+  };
 
   const socialIcons = [
     { icon: Facebook, href: '#', label: 'Facebook' },
@@ -97,21 +109,43 @@ const TopBar = () => {
             </div>
 
             <div ref={authLinksRef} className="flex items-center gap-4 text-sm font-semibold">
-              <Link
-                to="/registration"
-                className="hover:text-cm-yellow transition-colors duration-200 relative group"
-              >
-                REGISTRATION
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cm-yellow transition-all duration-300 group-hover:w-full" />
-              </Link>
-              <span className="text-blue-300">|</span>
-              <Link
-                to="/login"
-                className="hover:text-cm-yellow transition-colors duration-200 relative group"
-              >
-                LOGIN
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cm-yellow transition-all duration-300 group-hover:w-full" />
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  <span className="text-slate-100 hidden sm:inline">Hi, {userName}</span>
+                  <Link
+                    to="/my-account"
+                    className="hover:text-cm-yellow transition-colors duration-200 relative group"
+                  >
+                    MY ACCOUNT
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cm-yellow transition-all duration-300 group-hover:w-full" />
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="text-slate-100 hover:text-cm-yellow transition-colors duration-200"
+                  >
+                    LOGOUT
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/registration"
+                    className="hover:text-cm-yellow transition-colors duration-200 relative group"
+                  >
+                    REGISTRATION
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cm-yellow transition-all duration-300 group-hover:w-full" />
+                  </Link>
+                  <span className="text-blue-300">|</span>
+                  <Link
+                    to="/login"
+                    className="hover:text-cm-yellow transition-colors duration-200 relative group"
+                  >
+                    LOGIN
+                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cm-yellow transition-all duration-300 group-hover:w-full" />
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

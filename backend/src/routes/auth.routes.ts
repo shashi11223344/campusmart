@@ -97,7 +97,8 @@ router.post('/register', async (req: Request, res: Response) => {
             ...tokens,
         });
     } catch (err) {
-        res.status(500).json({ error: 'Registration failed' });
+        console.error('Registration Error:', err);
+        res.status(500).json({ error: 'Registration failed. Please try again.' });
     }
 });
 

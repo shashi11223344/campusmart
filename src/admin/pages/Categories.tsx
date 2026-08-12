@@ -72,8 +72,8 @@ export default function Categories() {
     };
 
     const filtered = categories.filter(c => 
-        c.name.toLowerCase().includes(search.toLowerCase()) || 
-        c.slug.toLowerCase().includes(search.toLowerCase())
+        (c.name || '').toLowerCase().includes((search || '').toLowerCase()) || 
+        (c.slug || '').toLowerCase().includes((search || '').toLowerCase())
     );
 
     return (

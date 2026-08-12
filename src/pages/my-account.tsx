@@ -1,10 +1,26 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { User, ShoppingBag, Heart, MapPin, CreditCard, LogOut, Edit, Package } from 'lucide-react';
+import api from '@/api/client';
+
+interface WishlistItem {
+  id: number;
+  product: {
+    id: number;
+    name: string;
+    price: number;
+    imageUrl?: string;
+    slug: string;
+    category?: { name: string; slug: string };
+  };
+}
 
 const MyAccount = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('profile');
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile');
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
   const storedUser = localStorage.getItem('cm_user');
   const currentUser = storedUser ? JSON.parse(storedUser) : null;
   const isLoggedIn = !!localStorage.getItem('cm_token') && !!currentUser;
@@ -13,6 +29,36 @@ const MyAccount = () => {
     localStorage.removeItem('cm_token');
     localStorage.removeItem('cm_user');
     navigate('/login');
+  };
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    setWishlistLoading(true);
+    api.get('/wishlist')
+      .then(({ data }) => setWishlist(data))
+      .catch(() => setWishlist([]))
+      .finally(() => setWishlistLoading(false));
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [searchParams]);
+
+  const removeFromWishlist = async (productId: number) => {
+    try {
+      await api.delete(`/wishlist/${productId}`);
+      setWishlist((prev) => prev.filter((item) => item.product.id !== productId));
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to remove from wishlist');
+    }
+  };
+
+  const moveToCart = (productId: number) => {
+    alert('Moved to cart and kept in wishlist.');
+    // TODO: integrate with cart service when available.
   };
 
   const tabs = [
@@ -27,11 +73,6 @@ const MyAccount = () => {
     { id: 'ORD001', date: '2024-01-15', total: 45000, status: 'Delivered', items: 3 },
     { id: 'ORD002', date: '2024-01-10', total: 125000, status: 'Processing', items: 1 },
     { id: 'ORD003', date: '2023-12-28', total: 28000, status: 'Delivered', items: 2 },
-  ];
-
-  const wishlist = [
-    { id: 1, name: 'Smart Classroom Desk', price: 8500, image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80' },
-    { id: 2, name: 'Interactive Whiteboard', price: 125000, image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80' },
   ];
 
   const addresses = [
@@ -174,24 +215,35 @@ const MyAccount = () => {
             {activeTab === 'wishlist' && (
               <div className="bg-white rounded-xl p-8 shadow-card">
                 <h2 className="text-xl font-bold text-cm-blue-dark mb-6">My Wishlist</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {wishlist.map((item) => (
-                    <div key={item.id} className="border rounded-lg p-4 flex gap-4">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-20 h-20 object-cover rounded-lg"
-                      />
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-cm-blue-dark">{item.name}</h3>
-                        <p className="text-cm-blue font-bold">₹{item.price.toLocaleString()}</p>
-                        <button className="mt-2 text-sm text-cm-blue hover:underline">
-                          Move to Cart
-                        </button>
+                {wishlistLoading ? (
+                  <div className="text-sm text-slate-500">Loading wishlist...</div>
+                ) : wishlist.length === 0 ? (
+                  <div className="text-sm text-slate-500">Your wishlist is empty. Add items from the product page or shop.</div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {wishlist.map((item) => (
+                      <div key={item.id} className="border rounded-lg p-4 flex gap-4">
+                        <img
+                          src={item.product.imageUrl || 'https://via.placeholder.com/160'}
+                          alt={item.product.name}
+                          className="w-20 h-20 object-cover rounded-lg"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-cm-blue-dark">{item.product.name}</h3>
+                          <p className="text-cm-blue font-bold">₹{item.product.price.toLocaleString()}</p>
+                          <div className="flex gap-3 mt-3">
+                            <button onClick={() => moveToCart(item.product.id)} className="text-sm text-cm-blue hover:underline">
+                              Move to Cart
+                            </button>
+                            <button onClick={() => removeFromWishlist(item.product.id)} className="text-sm text-red-600 hover:underline">
+                              Remove
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

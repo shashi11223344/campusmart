@@ -4,12 +4,29 @@ import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
+async function withRetry<T>(fn: () => Promise<T>, retries = 5, delayMs = 600, name = 'operation'): Promise<T> {
+    let lastError: any;
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+        try {
+            return await fn();
+        } catch (err: any) {
+            lastError = err;
+            const message = err?.message || '';
+            const isLockError = message.includes('Lock wait timeout exceeded');
+            console.warn(`⚠️ Retry ${attempt + 1}/${retries} for ${name}: ${message}`);
+            if (!isLockError || attempt === retries) break;
+            await new Promise((resolve) => setTimeout(resolve, delayMs * (attempt + 1)));
+        }
+    }
+    throw lastError;
+}
+
 async function main() {
     console.log('🌱 Seeding database...');
 
     // Admin user
     const adminHash = await bcrypt.hash('Admin@1234', 10);
-    await prisma.user.upsert({
+    await withRetry(() => prisma.user.upsert({
         where: { email: 'admin@campusmart.in' },
         update: {},
         create: {
@@ -20,11 +37,11 @@ async function main() {
             phone: '+91 98765 00000',
             institution: 'CampusMart',
         },
-    });
+    }));
 
     // Demo user
     const userHash = await bcrypt.hash('User@1234', 10);
-    await prisma.user.upsert({
+    await withRetry(() => prisma.user.upsert({
         where: { email: 'demo@campusmart.in' },
         update: {},
         create: {
@@ -35,7 +52,7 @@ async function main() {
             phone: '+91 98765 43210',
             institution: 'ABC International School',
         },
-    });
+    }));
 
     // Categories
     const categories = [
@@ -46,11 +63,11 @@ async function main() {
         { name: 'Library', slug: 'library' },
     ];
     for (const cat of categories) {
-        await prisma.category.upsert({
+        await withRetry(() => prisma.category.upsert({
             where: { slug: cat.slug },
             update: {},
             create: cat,
-        });
+        }));
     }
 
     const catMap = await prisma.category.findMany();
@@ -80,11 +97,11 @@ async function main() {
 
     for (const p of products) {
         const { categorySlug, ...rest } = p;
-        await prisma.product.upsert({
+        await withRetry(() => prisma.product.upsert({
             where: { slug: rest.slug },
             update: {},
             create: { ...rest, categoryId: catBySlug[categorySlug] },
-        });
+        }));
     }
 
     // Blog posts
@@ -99,11 +116,11 @@ async function main() {
     ];
 
     for (const post of posts) {
-        await prisma.blogPost.upsert({
+        await withRetry(() => prisma.blogPost.upsert({
             where: { slug: post.slug },
             update: {},
             create: post,
-        });
+        }));
     }
 
     // Catalogues
@@ -114,7 +131,7 @@ async function main() {
     ];
 
     for (const cat of catalogues) {
-        await prisma.catalogue.create({ data: cat });
+        await withRetry(() => prisma.catalogue.create({ data: cat }));
     }
 
     // Default site content
@@ -128,11 +145,11 @@ async function main() {
     ];
 
     for (const content of siteContent) {
-        await prisma.siteContent.upsert({
+        await withRetry(() => prisma.siteContent.upsert({
             where: { key: content.key },
             update: {},
             create: content,
-        });
+        }));
     }
 
     // Pages (CMS)
@@ -171,7 +188,7 @@ async function main() {
     ];
 
     for (const page of pages) {
-        await prisma.page.upsert({
+        await withRetry(() => prisma.page.upsert({
             where: { slug: page.slug },
             update: {},
             create: {
@@ -181,7 +198,7 @@ async function main() {
                 pageData: '{}',
                 published: true,
             },
-        });
+        }));
     }
 
     console.log('✅ Database seeded successfully!');

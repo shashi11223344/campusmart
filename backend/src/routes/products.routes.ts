@@ -97,7 +97,17 @@ router.post('/bulk', verifyToken, requireAdmin, async (req: AuthRequest, res: Re
             // If categoryId is provided in body, use it. Otherwise try to find category by slug if available in product data
             let targetCategoryId = categoryId;
             if (!targetCategoryId && p.categorySlug) {
-                const cat = await prisma.category.findUnique({ where: { slug: p.categorySlug } });
+                let cat = await prisma.category.findUnique({ where: { slug: p.categorySlug } });
+                if (!cat) {
+                    // Create category on-the-fly when processing bulk uploads so CSVs using new category names still import.
+                    const name = String(p.categorySlug).split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+                    try {
+                        cat = await prisma.category.create({ data: { name, slug: p.categorySlug } });
+                    } catch (e) {
+                        // Race or constraint error: try to find again
+                        cat = await prisma.category.findUnique({ where: { slug: p.categorySlug } });
+                    }
+                }
                 if (cat) targetCategoryId = cat.id;
             }
 

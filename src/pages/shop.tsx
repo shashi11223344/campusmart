@@ -17,6 +17,15 @@ const Shop = () => {
     api.get('/products/categories').then(({ data }) => setCategories(data));
   }, []);
 
+  const addToCart = async (product: Product) => {
+    try {
+      await api.post('/wishlist', { productId: product.id });
+      alert('Product added to wishlist for cart sync.');
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Please login to add products to wishlist.');
+    }
+  };
+
   useEffect(() => {
     setLoading(true);
     const params: Record<string, string> = { limit: '50' };
@@ -128,7 +137,7 @@ const Shop = () => {
 
                       <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100/60">
                         <span className="text-sm sm:text-base font-bold text-cm-blue tracking-tight">{formatPrice(product.price)}</span>
-                        <button className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 bg-cm-blue text-white rounded-lg hover:bg-cm-blue-dark transition-all duration-200 font-bold text-xs shadow-sm hover:shadow focus:ring-2 focus:ring-cm-blue/20">
+                        <button onClick={() => addToCart(product)} className="flex items-center justify-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 bg-cm-blue text-white rounded-lg hover:bg-cm-blue-dark transition-all duration-200 font-bold text-xs shadow-sm hover:shadow focus:ring-2 focus:ring-cm-blue/20">
                           <ShoppingCart className="w-3.5 h-3.5" />
                           <span className="hidden xl:inline-block">Add</span>
                           <span className="inline-block xl:hidden">Add</span>

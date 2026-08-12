@@ -580,8 +580,8 @@ export default function PagesManager() {
     };
 
     const filtered = pages.filter(p =>
-        p.title.toLowerCase().includes(search.toLowerCase()) ||
-        p.slug.toLowerCase().includes(search.toLowerCase())
+        (p.title || '').toLowerCase().includes((search || '').toLowerCase()) ||
+        (p.slug || '').toLowerCase().includes((search || '').toLowerCase())
     );
 
     const groups = classifyPages(filtered);

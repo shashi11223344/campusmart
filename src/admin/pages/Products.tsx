@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ChangeEvent } from 'react';
 import { Plus, Pencil, Trash2, Search, X } from 'lucide-react';
 import api from '../api/client';
 
@@ -91,16 +91,59 @@ export default function Products() {
         await fetchProducts();
     };
 
-    const filtered = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+    const filtered = products.filter(p => (p.name || '').toLowerCase().includes((search || '').toLowerCase()));
 
     // Bulk Upload State
     const [showBulkModal, setShowBulkModal] = useState(false);
     const [bulkCategory, setBulkCategory] = useState<number | ''>('');
+    const [sheetUrl, setSheetUrl] = useState('');
+    const [csvFileName, setCsvFileName] = useState('');
     const [csvData, setCsvData] = useState('');
     const [uploading, setUploading] = useState(false);
 
+    const handleCsvFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0] ?? null;
+        if (!file) {
+            setCsvFileName('');
+            setCsvData('');
+            return;
+        }
+        const fileName = file.name ?? '';
+        if (!fileName.toLowerCase().endsWith('.csv')) {
+            alert('Please select a CSV file');
+            return;
+        }
+        setCsvFileName(fileName);
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (typeof reader.result === 'string') {
+                setCsvData(reader.result);
+            } else {
+                alert('Unable to read CSV file. Please try again.');
+            }
+        };
+        reader.onerror = () => {
+            alert('Unable to read CSV file. Please try again.');
+        };
+        reader.readAsText(file);
+    };
+
+    const fetchCsvFromUrl = async () => {
+        if (!sheetUrl.trim()) return alert('Enter a URL first');
+        setUploading(true);
+        try {
+            const axios = (await import('axios')).default;
+            const { data } = await axios.get(sheetUrl);
+            setCsvData(data);
+        } catch {
+            alert('Failed to fetch data. Ensure it is Published to Web as CSV or the URL is a direct CSV file.');
+        } finally {
+            setUploading(false);
+        }
+    };
+
     const handleBulkUpload = async () => {
-        if (!csvData.trim()) return alert('Please paste CSV data');
+        if (!csvData.trim()) return alert('Please upload a CSV file, paste raw CSV data, or provide a CSV link');
         setUploading(true);
         try {
             const trimmedData = csvData.trim();
@@ -113,20 +156,44 @@ export default function Products() {
             const lines = trimmedData.split('\n').filter(row => row.replace(/,/g, '').trim() !== '');
             if (lines.length === 0) return alert('No valid rows found inside data.');
 
-            const headers = lines[0].split(',').map(h => {
-                const clean = h.trim().replace(/^"|"$/g, '').replace(/\s+/g, '').toLowerCase();
-                // Normalized mapping back to strict camelcase for backend
-                if (clean === 'categoryslug' || clean === 'category_slug') return 'categorySlug';
+            const headers = String(lines[0] ?? '').split(',').map((rawHeader) => {
+                const clean = String(rawHeader ?? '').trim().replace(/^"|"$/g, '').replace(/\s+/g, '').toLowerCase();
+                if (!clean) return '';
+                // Normalize common CSV header variants to backend keys
+                if (clean === 'categoryslug' || clean === 'category_slug' || clean === 'category') return 'categorySlug';
                 if (clean === 'imageurl' || clean === 'image_url') return 'imageUrl';
                 if (clean === 'specications' || clean === 'specification') return 'specifications';
+                if (clean === 'product_name' || clean === 'productname' || clean === 'name') return 'name';
+                if (clean === 'product_id' || clean === 'productid' || clean === 'id') return 'id';
+                if (clean === 'stock_quantity' || clean === 'stockqty' || clean === 'stock') return 'stock';
+                if (clean === 'price' || clean === 'listing_price') return 'price';
+                if (clean === 'sku') return 'sku';
                 return clean;
-            });
+            }).filter(Boolean);
 
-            const productsData = lines.slice(1).map(line => {
+            if (headers.length === 0) {
+                setUploading(false);
+                return alert('CSV header row is empty or invalid. Please upload a valid CSV.');
+            }
+
+            const productsData = lines.slice(1).map((line) => {
                 // Regex to split by comma ONLY if it is not inside double quotes
-                const values = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+                const values = String(line ?? '').split(/,(?=(?:(?:[^"]*"){2})*[^\"]*$)/).map((value) => String(value ?? '').trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
                 const p: any = {};
-                headers.forEach((h, idx) => { if (values[idx] !== undefined) p[h] = values[idx]; });
+                headers.forEach((h, idx) => {
+                    if (!h) return;
+                    let val = values[idx] ?? '';
+                    // If CSV provided a human-readable category name, convert to slug expected by backend
+                    if (h === 'categorySlug') {
+                        const raw = String(val || '').trim();
+                        const slugified = raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                        // If we have loaded categories, prefer matching by name or slug to ensure correct mapping
+                        const matched = categories.find(c => c.slug === slugified || c.name.toLowerCase() === raw.toLowerCase());
+                        val = matched ? matched.slug : slugified;
+                    }
+                    // Coerce numeric fields where appropriate (keep as strings for the server to parse if needed)
+                    p[h] = val;
+                });
                 return p;
             });
             
@@ -260,46 +327,48 @@ export default function Products() {
 
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-[#2c3e50] font-bold">2. Load Data from Source</label>
-                                <div className="flex gap-2">
-                                    <input 
-                                       type="url" 
-                                       placeholder="Paste Google Sheet 'Publish to Web' CSV Link..." 
-                                       className="flex-1 min-w-0 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-medium" 
-                                       id="sheetUrlInput"
-                                    />
-                                    <button 
-                                       onClick={async () => {
-                                          const url = (document.getElementById('sheetUrlInput') as HTMLInputElement).value;
-                                          if (!url) return alert('Enter a URL first');
-                                          try {
-                                             setUploading(true);
-                                             const { data } = await api.get(`/pages/proxy?url=${encodeURIComponent(url)}`); 
-                                             setCsvData(data);
-                                          } catch {
-                                             // Fallback to direct axios call if proxy fails or not set up
-                                             try {
-                                                const axios = (await import('axios')).default;
-                                                const { data } = await axios.get(url);
-                                                setCsvData(data);
-                                             } catch {
-                                                alert('Failed to fetch data. Ensure it is Published to Web as CSV.');
-                                             }
-                                          } finally { setUploading(false); }
-                                       }}
-                                       disabled={uploading}
-                                       className="px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold text-xs"
-                                    >
-                                       Fetch
-                                    </button>
-                                </div>
-                                <div className="relative">
-                                    <p className="text-[9px] text-slate-400 mt-1 mb-2">To get the link: Open Sheet &gt; File &gt; Share &gt; Publish to the web &gt; Choose 'CSV' &gt; Copy Link.</p>
-                                    <textarea 
-                                        className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 h-56 font-mono"
-                                        value={csvData}
-                                        onChange={(e) => setCsvData(e.target.value)}
-                                        placeholder="Or paste raw CSV here manually..."
-                                    />
+                                <div className="grid gap-4">
+                                    <div className="grid gap-2">
+                                        <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Upload CSV file</label>
+                                        <input
+                                            type="file"
+                                            accept=".csv,text/csv"
+                                            className="block w-full text-xs text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                            onChange={handleCsvFileChange}
+                                        />
+                                        {csvFileName && <p className="text-[10px] text-slate-400">Loaded file: {csvFileName}</p>}
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Or paste a CSV link</label>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="url"
+                                                placeholder="Paste Google Sheet 'Publish to Web' CSV link or direct CSV URL"
+                                                className="flex-1 min-w-0 border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-medium"
+                                                value={sheetUrl}
+                                                onChange={(e) => setSheetUrl(e.target.value)}
+                                            />
+                                            <button
+                                                onClick={fetchCsvFromUrl}
+                                                disabled={uploading}
+                                                className="px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl font-bold text-xs"
+                                            >
+                                                Fetch
+                                            </button>
+                                        </div>
+                                        <p className="text-[9px] text-slate-400">If using a Google Sheet, publish it to web as CSV and paste the URL here.</p>
+                                    </div>
+
+                                    <div className="relative">
+                                        <label className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Or paste raw CSV text</label>
+                                        <textarea
+                                            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 h-56 font-mono"
+                                            value={csvData}
+                                            onChange={(e) => setCsvData(e.target.value)}
+                                            placeholder="Paste CSV text here if you do not want to upload a file or use a link"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>

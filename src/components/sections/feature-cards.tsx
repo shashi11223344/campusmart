@@ -52,9 +52,12 @@ const defaultSidebar = {
 
 const FeatureCards = () => {
   const { content } = useSiteContent();
-  const features = content.home_features || defaultFeatures;
-  const sidebar = content.home_sidebar || defaultSidebar;
-  const { classifieds, resources, completedProjects, contacts } = sidebar;
+  const features = (Array.isArray(content.home_features) ? content.home_features : null) || defaultFeatures;
+  const rawSidebar = (typeof content.home_sidebar === 'object' && content.home_sidebar !== null) ? content.home_sidebar : defaultSidebar;
+  const classifieds = Array.isArray(rawSidebar.classifieds) ? rawSidebar.classifieds : defaultSidebar.classifieds;
+  const resources = Array.isArray(rawSidebar.resources) ? rawSidebar.resources : defaultSidebar.resources;
+  const completedProjects = Array.isArray(rawSidebar.completedProjects) ? rawSidebar.completedProjects : defaultSidebar.completedProjects;
+  const contacts = Array.isArray(rawSidebar.contacts) ? rawSidebar.contacts : defaultSidebar.contacts;
 
   const sectionRef = useRef<HTMLElement>(null);
 

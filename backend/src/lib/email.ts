@@ -54,12 +54,26 @@ export async function sendOtpEmail(to: string, otp: string, purpose: 'verify' | 
     </html>
     `;
 
-    await transporter.sendMail({
-        from: process.env.EMAIL_FROM,
-        to,
-        subject,
-        html,
-    });
+    console.log(`\n==========================================`);
+    console.log(`🔑 [CAMPUSMART OTP CODE]`);
+    console.log(`   To:      ${to}`);
+    console.log(`   OTP:     ${otp}`);
+    console.log(`   Purpose: ${purpose}`);
+    console.log(`==========================================\n`);
+
+    try {
+        await transporter.sendMail({
+            from: process.env.EMAIL_FROM || 'CampusMart <web.thirdeye@gmail.com>',
+            to,
+            subject,
+            html,
+        });
+        console.log(`✅ OTP email successfully dispatched to ${to}`);
+    } catch (smtpError: any) {
+        console.error(`⚠️ SMTP Email Sending Failed: ${smtpError?.message || smtpError}`);
+        console.error(`👉 [FAIL] OTP could not be delivered to ${to}.`);
+        throw smtpError;
+    }
 }
 
 export function generateOtp(): string {

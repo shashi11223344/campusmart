@@ -53,7 +53,7 @@ const Blog = () => {
     fetchData();
   }, [activeCategory]);
 
-  const filteredPosts = posts.filter(p => !searchQuery || p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.excerpt.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredPosts = posts.filter(p => !searchQuery || (p.title || '').toLowerCase().includes((searchQuery || '').toLowerCase()) || (p.excerpt || '').toLowerCase().includes((searchQuery || '').toLowerCase()));
 
   return (
     <main className="min-h-screen bg-gray-50/50">

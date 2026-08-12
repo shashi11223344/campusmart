@@ -77,6 +77,24 @@ const ProductDetail = () => {
   const formatPrice = (price: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(price);
 
+  const addToWishlist = async () => {
+    try {
+      await api.post('/wishlist', { productId: product.id });
+      alert('Added to wishlist');
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to add to wishlist');
+    }
+  };
+
+  const addToCart = async () => {
+    try {
+      await api.post('/wishlist', { productId: product.id });
+      alert('Added to wishlist for cart sync.');
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Please login to add products to wishlist.');
+    }
+  };
+
   return (
     <main className="bg-slate-50 min-h-screen pb-12">
       {/* Breadcrumb & Back Action */}
@@ -151,14 +169,14 @@ const ProductDetail = () => {
                   >+</button>
                 </div>
 
-                <button className="h-12 flex-1 bg-cm-blue hover:bg-cm-blue-dark text-white rounded-xl shadow-lg shadow-cm-blue/20 font-bold flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5">
+                <button onClick={addToCart} className="h-12 flex-1 bg-cm-blue hover:bg-cm-blue-dark text-white rounded-xl shadow-lg shadow-cm-blue/20 font-bold flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5">
                   <ShoppingCart className="w-5 h-5" />
                   Add to Cart
                 </button>
               </div>
 
               <div className="flex gap-2">
-                 <button className="flex-1 h-11 border border-slate-200 rounded-xl hover:bg-slate-50 font-bold text-sm text-slate-700 flex items-center justify-center gap-2 transition-colors">
+                 <button onClick={addToWishlist} className="flex-1 h-11 border border-slate-200 rounded-xl hover:bg-slate-50 font-bold text-sm text-slate-700 flex items-center justify-center gap-2 transition-colors">
                     <Heart className="w-4 h-4" />
                     Wishlist
                  </button>
