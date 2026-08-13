@@ -57,7 +57,7 @@ const Blog = () => {
 
   return (
     <main className="min-h-screen bg-gray-50/50">
-      <section ref={heroRef} className="bg-cm-blue py-20">
+      <section ref={heroRef} className="bg-cm-blue mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] py-20 mt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">{heroTitle}</h1>
           <p className="text-xl text-white/80 max-w-3xl mx-auto">

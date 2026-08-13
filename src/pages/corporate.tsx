@@ -120,7 +120,7 @@ const Corporate = () => {
   return (
     <main className="min-h-screen bg-white font-opensans">
       {/* Grand Legacy Hero */}
-      <section ref={heroRef} className="relative min-h-[40vh] flex items-center bg-cm-blue-dark overflow-hidden py-16 md:py-24">
+      <section ref={heroRef} className="relative min-h-[40vh] flex items-center bg-cm-blue-dark overflow-hidden py-16 md:py-24 mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] mt-4">
         <div className="absolute inset-0 opacity-10" 
              style={{ backgroundImage: 'radial-gradient(var(--cm-blue) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         <div className="w-full mx-auto px-4 sm:px-8 text-center relative z-10">
