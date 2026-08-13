@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import { Plus, Pencil, Trash2, Search, X } from 'lucide-react';
 import api from '../api/client';
 
