@@ -142,23 +142,29 @@ const Innovation = () => {
          </div>
       </section>
 
-      {/* Consecutive Details Rows List */}
-      <section className="space-y-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-         {sections.map((sec, i) => (
-            <div key={i} className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
-               <div className="md:col-span-5 aspect-[4/3] rounded-2xl overflow-hidden bg-slate-100 border border-slate-100">
-                  <img src={sec.image || 'https://via.placeholder.com/600x450?text=Innovation'} alt={sec.title} className="w-full h-full object-cover" />
-               </div>
-               <div className="md:col-span-7 space-y-4">
-                  <div className="h-1 w-16 bg-cm-yellow rounded-full" />
-                  <h2 className="text-xl md:text-3xl font-black text-slate-900 tracking-tight">{sec.title}</h2>
-                  <p className="text-slate-600 text-sm md:text-base leading-relaxed font-opensans">{sec.description}</p>
-                  <div className="pt-4 flex items-center gap-1.5 text-xs font-bold text-cm-blue">
-                     <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Managed Solutions Supported
+      {/* Card-based detail grid */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {sections.map((sec, i) => (
+               <div key={i} className="group bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] border border-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_80px_-20px_rgba(15,23,42,0.28)]">
+                  <div className="relative overflow-hidden aspect-[4/3]">
+                     <img src={sec.image || 'https://via.placeholder.com/600x450?text=Innovation'} alt={sec.title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/30 to-transparent" />
+                     <div className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.24em] text-slate-800 shadow-sm backdrop-blur-sm">
+                        0{i + 1}
+                     </div>
+                  </div>
+                  <div className="px-6 pb-6 pt-5">
+                     <div className="h-1 w-14 bg-cm-yellow rounded-full mb-3" />
+                     <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight mb-3">{sec.title}</h2>
+                     <p className="text-slate-600 text-sm md:text-base leading-relaxed font-opensans">{sec.description}</p>
+                     <div className="mt-5 flex items-center gap-1.5 text-xs font-bold text-cm-blue">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Managed Solutions Supported
+                     </div>
                   </div>
                </div>
-            </div>
-         ))}
+            ))}
+         </div>
       </section>
 
       {/* CTA Box */}

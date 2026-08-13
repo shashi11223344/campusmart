@@ -58,14 +58,19 @@ const TechInfra = () => {
   return (
     <main className="min-h-screen bg-white">
       {/* Standard Corporate Hero */}
-      <section ref={heroRef} className="bg-cm-blue py-10 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto text-center text-white">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
-            {heroTitle}
-          </h1>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto leading-relaxed">
-            {heroSubtitle}
-          </p>
+      <section ref={heroRef} className="bg-cm-blue mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] py-6 md:py-8 overflow-hidden relative shadow-inner">
+        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-8 relative z-10 px-4">
+          <div className="lg:w-1/2 text-left text-white">
+            <h1 className="text-2xl md:text-3xl font-bold mb-3 tracking-tight">
+              {heroTitle}
+            </h1>
+            <p className="text-sm md:text-base text-white/85 leading-snug max-w-xl">
+              {heroSubtitle}
+            </p>
+          </div>
+          <div className="lg:w-1/2 relative">
+            <img src={heroImage} alt={heroTitle} className="rounded-2xl shadow-xl w-full h-[260px] object-cover border-2 border-cm-blue-dark relative z-10" />
+          </div>
         </div>
       </section>
 
@@ -100,12 +105,12 @@ const TechInfra = () => {
             {cards.map((card, i) => {
               const Icon = ICONS[i % ICONS.length];
               return (
-                <div key={card.title} className="group p-8 bg-white border border-gray-100 rounded-2xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col items-start shadow-sm">
+                <div key={card.title} className="group p-8 bg-white border border-slate-200/70 rounded-[2rem] hover:shadow-[0_30px_80px_-20px_rgba(15,23,42,0.28)] transition duration-300 hover:-translate-y-1 flex flex-col items-start shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] min-h-[360px]">
                   <div className="w-16 h-16 bg-cm-blue/5 rounded-2xl flex items-center justify-center mb-6 border border-cm-blue/10 group-hover:bg-cm-blue transition-all duration-500 shadow-inner">
                     <Icon className="w-8 h-8 text-cm-blue group-hover:text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-cm-blue-dark mb-3 tracking-tighter group-hover:text-cm-blue transition-colors leading-tight">{card.title}</h3>
-                  <p className="text-gray-500 text-xs leading-relaxed font-opensans flex-grow">{card.description}</p>
+                  <p className="text-sm text-slate-600 leading-relaxed flex-grow">{card.description}</p>
                   <div className="mt-8 pt-6 border-t border-gray-50 w-full flex items-center gap-2">
                     <Shield className="w-4 h-4 text-cm-yellow" />
                     <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-cm-blue-dark/40">Secure Tech</span>

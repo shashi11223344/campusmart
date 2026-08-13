@@ -136,7 +136,7 @@ const SportsInfra = () => {
   return (
     <main className="min-h-screen bg-white text-opensans">
       {/* High-Performance Hero */}
-      <section ref={heroRef} className="bg-cm-blue py-6 md:py-8 overflow-hidden relative shadow-inner">
+      <section ref={heroRef} className="bg-cm-blue mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] py-6 md:py-8 overflow-hidden relative shadow-inner">
         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-8 relative z-10 px-4">
           <div className="lg:w-1/2 text-left text-white">
             <h1 className="text-2xl md:text-3xl font-bold mb-3 tracking-tight">

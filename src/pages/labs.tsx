@@ -69,18 +69,18 @@ const Labs = () => {
   return (
     <main className="min-h-screen bg-white">
       {/* Standard Corporate Hero - Side by Side */}
-      <section ref={heroRef} className="bg-cm-blue py-12 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12">
+      <section ref={heroRef} className="bg-cm-blue mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] py-6 md:py-8 overflow-hidden relative shadow-inner">
+        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-8 relative z-10 px-4">
           <div className="lg:w-1/2 text-left text-white">
-            <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-bold mb-3 tracking-tight">
               {heroTitle}
             </h1>
-            <p className="text-lg text-white/80 leading-relaxed font-opensans max-w-xl">
+            <p className="text-sm md:text-base text-white/85 leading-snug max-w-xl">
               {heroSubtitle}
             </p>
           </div>
           <div className="lg:w-1/2">
-            <img src={heroImage} alt={heroTitle} className="rounded-2xl shadow-xl w-full h-[350px] object-cover border-4 border-cm-blue-dark" />
+            <img src={heroImage} alt={heroTitle} className="rounded-2xl shadow-xl w-full h-[260px] object-cover border-2 border-cm-blue-dark" />
           </div>
         </div>
       </section>
@@ -99,19 +99,19 @@ const Labs = () => {
             {cards.map((lab, i) => {
               const Icon = ICONS[i % ICONS.length];
               return (
-                <div key={lab.title} className="group bg-white border border-gray-100 rounded-2xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col shadow-sm overflow-hidden">
-                  <div className="aspect-[16/10] overflow-hidden relative">
-                    <img src={lab.image} alt={lab.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                    <div className="absolute inset-0 bg-cm-blue-dark/20 group-hover:bg-transparent transition-colors duration-500" />
+                <div key={lab.title} className="group bg-white border border-slate-200/70 rounded-[2rem] hover:shadow-[0_30px_80px_-20px_rgba(15,23,42,0.28)] transition duration-300 hover:-translate-y-1 flex flex-col shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] min-h-[360px] overflow-hidden">
+                  <div className="relative overflow-hidden aspect-[4/5]">
+                    <img src={lab.image} alt={lab.title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/30 to-transparent" />
                     <div className="absolute top-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20 group-hover:bg-cm-blue group-hover:scale-110 transition-all duration-500">
                       <Icon className="w-5 h-5 text-white" />
                     </div>
                   </div>
-                  <div className="p-6 flex-grow flex flex-col">
-                    <h3 className="text-lg font-bold text-cm-blue-dark mb-2 tracking-tighter group-hover:text-cm-blue transition-colors leading-tight">{lab.title}</h3>
-                    <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 font-opensans flex-grow">{lab.description || 'Specialized turnkey solutions for advanced institutional learning.'}</p>
-                    <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
-                       <span className="text-[10px] font-bold uppercase tracking-tight text-cm-blue/60">Module</span>
+                  <div className="px-6 pb-6 pt-5 flex-grow flex flex-col">
+                    <h3 className="text-xl font-semibold text-slate-900 tracking-tight mb-3">{lab.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed mb-4 flex-grow">{lab.description || 'Specialized turnkey solutions for advanced institutional learning.'}</p>
+                    <div className="flex items-center justify-between text-slate-700">
+                       <span className="text-xs uppercase tracking-[0.28em] text-slate-400">Module</span>
                     </div>
                   </div>
                 </div>

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Leaf, Sun, Wind, Droplets, Recycle } from 'lucide-react';
+import { Sparkles, Users, Palette, Music, Microscope, Zap } from 'lucide-react';
 import { usePageData } from '@/hooks/usePageData';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -52,22 +52,34 @@ const DEFAULTS = {
   ]
 };
 
+interface Card { title: string; description: string; image?: string; href?: string; }
+
+const ICONS = [Sparkles, Users, Palette, Music, Microscope, Zap];
+
 const NewEnvironments = () => {
   const heroRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
   const { data } = usePageData('new-environments');
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo(
-        heroRef.current,
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-        }
-      );
+      gsap.fromTo(heroRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' });
+      
+      const cards = cardsRef.current?.children;
+      if (cards) {
+        gsap.fromTo(cards, 
+          { opacity: 0, y: 30 }, 
+          { 
+            opacity: 1, y: 0, 
+            duration: 0.6, 
+            stagger: 0.1, 
+            scrollTrigger: {
+              trigger: cardsRef.current,
+              start: 'top 85%',
+            }
+          }
+        );
+      }
     });
 
     return () => ctx.revert();
@@ -78,7 +90,7 @@ const NewEnvironments = () => {
   const heroImage = data.heroImage ?? DEFAULTS.heroImage;
   const section1Title = data.section1Title ?? DEFAULTS.section1Title;
 
-  const cards = (data.cards && data.cards.length > 0)
+  const cards: Card[] = (data.cards && data.cards.length > 0)
     ? data.cards.map((c: any, i: number) => ({
       ...c,
       image: c.image || DEFAULTS.cards[i]?.image || DEFAULTS.cards[0].image,
@@ -86,155 +98,69 @@ const NewEnvironments = () => {
     }))
     : DEFAULTS.cards;
 
-  const sustainabilityFeatures = [
-    { icon: Leaf, title: 'Green Building', description: 'Eco-friendly construction materials and practices' },
-    { icon: Sun, title: 'Solar Power', description: 'Renewable energy integration for campus operations' },
-    { icon: Wind, title: 'Natural Ventilation', description: 'Optimized airflow design for energy efficiency' },
-    { icon: Droplets, title: 'Water Conservation', description: 'Rainwater harvesting and recycling systems' },
-    { icon: Recycle, title: 'Waste Management', description: 'Comprehensive recycling and waste reduction' },
-  ];
-
   return (
-    <main className="min-h-screen">
-      {/* Hero Section */}
-      <section ref={heroRef} className="relative h-[500px] overflow-hidden">
-        <img
-          src={heroImage}
-          alt={heroTitle}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-cm-blue/90 to-cm-blue/60" />
-        <div className="relative w-full mx-auto px-2 sm:px-4 h-full flex items-center">
-          <div className="text-white max-w-2xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
+    <main className="min-h-screen bg-white">
+      {/* Standard Corporate Hero - Side by Side */}
+      <section ref={heroRef} className="bg-cm-blue mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] py-6 md:py-8 overflow-hidden relative shadow-inner">
+        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-8 relative z-10 px-4">
+          <div className="lg:w-1/2 text-left text-white">
+            <h1 className="text-2xl md:text-3xl font-bold mb-3 tracking-tight">
               {heroTitle}
             </h1>
-            <p className="text-xl text-white/90">
+            <p className="text-sm md:text-base text-white/85 leading-snug max-w-xl">
               {heroSubtitle}
             </p>
           </div>
-        </div>
-      </section>
-
-      {/* Environment Types */}
-      <section className="py-4">
-        <div className="w-full mx-auto px-2 sm:px-4">
-          <h2 className="text-3xl font-bold text-cm-blue-dark text-center mb-4">
-            {section1Title}
-          </h2>
-          <p className="text-gray-600 text-center max-w-3xl mx-auto mb-6">
-            We design and build purpose-specific environments that cater to different
-            learning styles and educational needs.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            {cards.map((env: any) => (
-              <Link
-                key={env.title}
-                to={env.href}
-                className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-sm-hover transition-all duration-300 hover:-translate-y-2"
-              >
-                <div className="h-48 overflow-hidden">
-                  <img
-                    src={env.image}
-                    alt={env.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-cm-blue-dark mb-2 group-hover:text-cm-blue transition-colors">
-                    {env.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4">{env.description}</p>
-                  <span className="inline-flex items-center gap-2 text-cm-blue font-semibold">
-                    Learn More
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </div>
-              </Link>
-            ))}
+          <div className="lg:w-1/2">
+            <img src={heroImage} alt={heroTitle} className="rounded-2xl shadow-xl w-full h-[260px] object-cover border-2 border-cm-blue-dark" />
           </div>
         </div>
       </section>
 
-      {/* Sustainability Section */}
-      <section className="py-4 bg-cm-gray">
-        <div className="w-full mx-auto px-2 sm:px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-cm-blue-dark mb-6">
-                Sustainable Campus Design
-              </h2>
-              <p className="text-gray-600 text-lg leading-relaxed mb-2">
-                Our commitment to sustainability ensures that every new environment
-                we create is eco-friendly, energy-efficient, and designed for the future.
-              </p>
-              <div className="space-y-4">
-                {sustainabilityFeatures.map(({ icon: Icon, title, description }) => (
-                  <div key={title} className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-full bg-cm-lime/20 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-5 h-5 text-cm-blue" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-cm-blue-dark">{title}</h4>
-                      <p className="text-gray-600 text-sm">{description}</p>
+      {/* Learning Environments Grid Layout */}
+      <section className="py-12 md:py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-cm-blue-dark tracking-tighter">
+              {section1Title}
+            </h2>
+            <div className="hidden md:block h-1 w-24 bg-cm-yellow rounded-full" />
+          </div>
+
+          <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {cards.map((space, i) => {
+              const Icon = ICONS[i % ICONS.length];
+              return (
+                <Link key={space.title} to={space.href || '/furniture'} className="group bg-white border border-slate-200/70 rounded-[2rem] hover:shadow-[0_30px_80px_-20px_rgba(15,23,42,0.28)] transition duration-300 hover:-translate-y-1 flex flex-col shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] min-h-[360px] overflow-hidden">
+                  <div className="relative overflow-hidden aspect-[4/5]">
+                    <img src={space.image} alt={space.title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/30 to-transparent" />
+                    <div className="absolute top-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20 group-hover:bg-cm-blue group-hover:scale-110 transition-all duration-500">
+                      <Icon className="w-5 h-5 text-white" />
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <img
-                src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                alt="Sustainable Campus"
-                className="rounded-lg shadow-sm w-full"
-              />
-            </div>
+                  <div className="px-6 pb-6 pt-5 flex-grow flex flex-col">
+                    <h3 className="text-xl font-semibold text-slate-900 tracking-tight mb-3">{space.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed mb-4 flex-grow">{space.description}</p>
+                    <div className="flex items-center justify-between text-slate-700">
+                       <span className="text-xs uppercase tracking-[0.28em] text-slate-400">Learning Space</span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* NEP Ready Section */}
-      <section className="py-4 bg-cm-blue">
-        <div className="w-full mx-auto px-2 sm:px-4 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            NEP 2020 Ready Environments
-          </h2>
-          <p className="text-xl text-white/80 max-w-3xl mx-auto mb-2">
-            Our learning spaces are designed in alignment with the National Education Policy 2020,
-            supporting holistic development, flexibility, and multidisciplinary learning.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-12">
-            {[
-              { title: 'Holistic Development', description: 'Spaces that nurture cognitive, physical, and emotional growth' },
-              { title: 'Flexibility', description: 'Adaptable environments for diverse learning activities' },
-              { title: 'Integration', description: 'Seamless blend of academic and vocational learning spaces' },
-            ].map((feature) => (
-              <div key={feature.title} className="bg-white/10 backdrop-blur rounded-xl p-6">
-                <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-                <p className="text-white/80">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-4">
-        <div className="w-full mx-auto px-2 sm:px-4 text-center">
-          <h2 className="text-3xl font-bold text-cm-blue-dark mb-6">
-            Ready to Transform Your Campus?
-          </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-2">
-            Let us help you create learning environments that inspire and empower.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/request-quote" className="btn-primary">
-              Request a Quote
-            </Link>
-            <Link to="/contact-us" className="btn-secondary">
-              Contact Us
-            </Link>
-          </div>
+      {/* Trust Quote */}
+      <section className="py-16 bg-cm-blue-dark text-white text-center rounded-t-[4rem] border-t-4 border-cm-yellow/50">
+        <div className="max-w-4xl mx-auto px-6">
+          <h3 className="text-xl md:text-3xl font-bold mb-8 leading-relaxed max-w-2xl mx-auto">
+            "Learning environments shape minds. We design spaces where students don't just acquire knowledge—they develop wisdom."
+          </h3>
+          <div className="w-12 h-1 bg-cm-yellow mx-auto mb-4 rounded-full" />
+          <div className="font-bold uppercase tracking-widest text-xs text-white/50">Campus Mart Learning Environment Philosophy</div>
         </div>
       </section>
     </main>

@@ -78,24 +78,23 @@ const CampusDesign = () => {
   return (
     <main className="min-h-screen bg-white">
       {/* Standard Corporate Hero - Side by Side */}
-      <section ref={heroRef} className="bg-cm-blue py-10 px-4 sm:px-6 lg:px-8 overflow-hidden relative shadow-inner">
-         <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-12 relative z-10">
+      <section ref={heroRef} className="bg-cm-blue mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] py-6 md:py-8 overflow-hidden relative shadow-inner">
+        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-8 relative z-10 px-4">
           <div className="lg:w-1/2 text-left text-white">
-            <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-bold mb-3 tracking-tight">
               {heroTitle}
             </h1>
-            <p className="text-lg md:text-xl text-white/80 leading-relaxed font-opensans max-w-xl">
+            <p className="text-sm md:text-base text-white/85 leading-snug max-w-xl">
               {heroSubtitle}
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link to="/request-quote" className="btn-secondary px-8 py-3 text-base">
+            <div className="mt-5 flex flex-wrap gap-4">
+              <Link to="/request-quote" className="btn-secondary px-6 py-2.5 text-sm font-bold">
                 Start Planning
               </Link>
             </div>
           </div>
           <div className="lg:w-1/2 relative">
-            <div className="absolute -inset-4 bg-cm-blue-dark/20 rounded-[3rem] blur-2xl" />
-            <img src={heroImage} alt={heroTitle} className="rounded-[2rem] shadow-2xl w-full h-[400px] object-cover border-4 border-cm-blue-dark relative z-10" />
+            <img src={heroImage} alt={heroTitle} className="rounded-2xl shadow-xl w-full h-[260px] object-cover border-2 border-cm-blue-dark relative z-10" />
           </div>
         </div>
       </section>
@@ -118,21 +117,18 @@ const CampusDesign = () => {
             {cards.map((service) => (
               <div 
                 key={service.title} 
-                className="group bg-white rounded-2xl overflow-hidden shadow-sm transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border border-gray-100 flex flex-col"
+                className="group bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_80px_-20px_rgba(15,23,42,0.28)] border border-slate-200/70 flex flex-col min-h-[360px]"
               >
-                <div className="aspect-[16/10] overflow-hidden relative">
-                  <img src={service.image} alt={service.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-cm-blue-dark/10 group-hover:bg-transparent transition-colors duration-500" />
+                <div className="relative overflow-hidden aspect-[4/5]">
+                  <img src={service.image} alt={service.title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/30 to-transparent" />
                 </div>
-                <div className="p-6 flex flex-col flex-grow">
-                  <h3 className="text-lg font-bold text-cm-blue-dark mb-2 group-hover:text-cm-blue transition-colors tracking-tight">{service.title}</h3>
-                  <p className="text-gray-500 text-xs leading-relaxed line-clamp-2 font-opensans flex-grow">{service.description}</p>
-                  <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                       <div className="h-1 w-4 bg-cm-yellow rounded-full" />
-                       <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-cm-blue">Architecture</span>
-                    </div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-cm-blue opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">View Details</span>
+                <div className="px-6 pb-6 pt-5 flex flex-col flex-grow">
+                  <h3 className="text-xl font-semibold text-slate-900 tracking-tight mb-3">{service.title}</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed mb-4 flex-grow">{service.description}</p>
+                  <div className="flex items-center justify-between text-slate-700">
+                    <span className="text-xs uppercase tracking-[0.28em] text-slate-400">Architecture</span>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-cm-blue">View</span>
                   </div>
                 </div>
               </div>

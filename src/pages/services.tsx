@@ -80,28 +80,32 @@ const Services = () => {
                     </p>
                 </div>
 
-                <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
                     {cardList.map((service: any, i: number) => {
                         const Icon = iconMap[service.title] || Ruler;
                         return (
                             <Link 
                                 key={i} 
                                 to={service.href} 
-                                className="service-card group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all p-8 flex gap-6"
+                                className="service-card group bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all p-8 flex h-full min-h-[260px] w-full gap-6"
                             >
-                                <div className={`w-16 h-16 rounded-xl ${service.color} flex items-center justify-center text-white shrink-0 group-hover:scale-110 transition-transform`}>
-                                    <Icon className="w-8 h-8" />
-                                </div>
-                                <div>
-                                    <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-cm-blue transition-colors">
-                                        {service.title}
-                                    </h3>
-                                    <p className="text-gray-600 leading-relaxed mb-4">
-                                        {service.description}
-                                    </p>
-                                    <span className="text-cm-blue font-bold text-sm uppercase tracking-wider flex items-center gap-2">
-                                        Learn More <span className="text-xl">→</span>
-                                    </span>
+                                <div className="flex h-full w-full items-start gap-6">
+                                    <div className={`w-16 h-16 rounded-xl ${service.color} flex items-center justify-center text-white shrink-0 group-hover:scale-110 transition-transform`}>
+                                        <Icon className="w-8 h-8" />
+                                    </div>
+                                    <div className="flex flex-1 flex-col justify-between min-w-0">
+                                        <div>
+                                            <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-cm-blue transition-colors">
+                                                {service.title}
+                                            </h3>
+                                            <p className="text-gray-600 leading-relaxed mb-4">
+                                                {service.description}
+                                            </p>
+                                        </div>
+                                        <span className="text-cm-blue font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+                                            Learn More <span className="text-xl">→</span>
+                                        </span>
+                                    </div>
                                 </div>
                             </Link>
                         );

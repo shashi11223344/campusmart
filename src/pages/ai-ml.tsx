@@ -61,28 +61,27 @@ const AIML = () => {
   return (
     <main className="min-h-screen bg-white">
       {/* High-Tech Hero - Standardized to Corporate Style */}
-      <section ref={heroRef} className="bg-cm-blue py-10 md:py-14 overflow-hidden relative shadow-inner">
-        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-10 relative z-10 px-4">
+      <section ref={heroRef} className="bg-cm-blue mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] py-6 md:py-8 overflow-hidden relative shadow-inner">
+        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-center gap-8 relative z-10 px-4">
           <div className="lg:w-1/2 text-left text-white">
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-3">
               <div className="h-px w-8 bg-cm-yellow" />
               <span className="text-cm-yellow font-bold text-[10px] uppercase tracking-[0.3em]">Neural Systems Online</span>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">
               {heroTitle}
             </h1>
-            <p className="text-lg md:text-xl text-white/80 leading-relaxed font-opensans max-w-xl">
+            <p className="text-sm md:text-base text-white/85 leading-snug max-w-xl">
               {heroSubtitle}
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link to="/request-quote" className="btn-secondary px-8 py-3 text-base font-bold">
+            <div className="mt-5 flex flex-wrap gap-4">
+              <Link to="/request-quote" className="btn-secondary px-6 py-2.5 text-sm font-bold">
                 Deploy Solutions
               </Link>
             </div>
           </div>
           <div className="lg:w-1/2 relative">
-             <div className="absolute -inset-4 bg-cm-blue-dark/20 rounded-[3rem] blur-2xl" />
-             <img src={heroImage} alt={heroTitle} className="rounded-[2rem] shadow-2xl w-full h-[380px] object-cover border-4 border-cm-blue-dark relative z-10" />
+             <img src={heroImage} alt={heroTitle} className="rounded-2xl shadow-xl w-full h-[260px] object-cover border-2 border-cm-blue-dark relative z-10" />
           </div>
         </div>
       </section>
@@ -99,7 +98,7 @@ const AIML = () => {
             {cards.map((s, i) => {
               const Icon = ICONS[i % ICONS.length];
               return (
-                <div key={s.title} className="group bg-white border border-gray-100 p-8 hover:shadow-2xl transition-all duration-500 rounded-2xl hover:-translate-y-2 flex flex-col items-center text-center shadow-sm">
+                <div key={s.title} className="group bg-white border border-slate-200/70 rounded-[2rem] hover:shadow-[0_30px_80px_-20px_rgba(15,23,42,0.28)] transition duration-300 hover:-translate-y-1 flex flex-col items-center text-center shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] min-h-[360px] p-8">
                   <div className="relative mb-8">
                     <div className="w-16 h-16 bg-cm-blue/5 rounded-2xl flex items-center justify-center group-hover:bg-cm-blue group-hover:scale-110 transition-all duration-500 border border-cm-blue/10 shadow-inner">
                       <Icon className="w-8 h-8 text-cm-blue group-hover:text-white" />
@@ -108,7 +107,7 @@ const AIML = () => {
 
                   <div className="relative font-opensans flex-grow">
                     <h3 className="text-xl font-bold text-cm-blue-dark mb-3 tracking-tighter group-hover:text-cm-blue transition-colors leading-tight">{s.title}</h3>
-                    <p className="text-gray-500 text-xs leading-relaxed line-clamp-3">{s.description}</p>
+                    <p className="text-sm text-slate-600 leading-relaxed">{s.description}</p>
                   </div>
                   <div className="mt-8 pt-6 border-t border-gray-50 w-full flex items-center justify-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-cm-yellow" />

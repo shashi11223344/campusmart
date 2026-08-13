@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Phone, Mail, Clock, Send, MessageCircle } from 'lucide-react';
+import { Phone, Mail, Clock, Send, MessageCircle } from 'lucide-react';
 import api from '@/api/client';
 
 const ContactUs = () => {
@@ -10,7 +10,6 @@ const ContactUs = () => {
     collegeName: '',
     authorisedPerson: '',
     address: '',
-    pincode: '',
     coursesOffered: '',
     subject: '',
     message: '',
@@ -34,7 +33,6 @@ const ContactUs = () => {
         collegeName: '',
         authorisedPerson: '',
         address: '',
-        pincode: '',
         coursesOffered: '',
         subject: '', 
         message: '' 
@@ -47,11 +45,6 @@ const ContactUs = () => {
   };
 
   const contactInfo = [
-    {
-      icon: MapPin,
-      title: 'Address',
-      content: 'Third Eye Retail Pvt. Ltd.\n123, Business Park\nBangalore, Karnataka 560001',
-    },
     {
       icon: Phone,
       title: 'Phone',
@@ -164,15 +157,20 @@ const ContactUs = () => {
                     />
                   </div>
                   <div>
-                    <label className="form-label">Pincode *</label>
-                    <input
-                      type="text"
-                      value={formData.pincode}
-                      onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
+                    <label className="form-label">Subject *</label>
+                    <select
+                      value={formData.subject}
+                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                       className="form-input"
-                      placeholder="6-digit pincode"
                       required
-                    />
+                    >
+                      <option value="">Select a subject</option>
+                      <option value="general">General Inquiry</option>
+                      <option value="sales">Sales</option>
+                      <option value="support">Technical Support</option>
+                      <option value="partnership">Partnership</option>
+                      <option value="feedback">Feedback</option>
+                    </select>
                   </div>
                 </div>
                 <div>
@@ -277,26 +275,6 @@ const ContactUs = () => {
         </div>
       </div>
 
-      {/* Map Section */}
-      <section className="py-4 bg-cm-gray">
-        <div className="w-full mx-auto px-2 sm:px-4">
-          <h2 className="text-2xl font-bold text-cm-blue-dark mb-6 text-center">
-            Our Location
-          </h2>
-          <div className="bg-white rounded-xl overflow-hidden shadow-sm h-[400px]">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.038042988!2d77.5946!3d12.9716!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDU4JzE3LjgiTiA3N8KwMzUnNDAuNiJF!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="Campus Mart Location"
-            />
-          </div>
-        </div>
-      </section>
     </main>
   );
 };

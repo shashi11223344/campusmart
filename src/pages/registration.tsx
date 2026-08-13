@@ -14,7 +14,7 @@ const Registration = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState('');
   const [formData, setFormData] = useState({
-    name: '', email: '', password: '', phone: '', institution: '',
+    name: '', email: '', password: '', phone: '', institution: '', pincode: '',
   });
 
   const set = (k: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -132,12 +132,18 @@ const Registration = () => {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-semibold text-gray-700">Institution</label>
-                  <div className="relative">
-                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-                      placeholder="College name" value={formData.institution} onChange={set('institution')} />
-                  </div>
+                  <label className="text-sm font-semibold text-gray-700">Pincode</label>
+                  <input type="text" className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    placeholder="6-digit pincode" value={formData.pincode} onChange={set('pincode')} />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-sm font-semibold text-gray-700">Institution</label>
+                <div className="relative">
+                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    placeholder="College name" value={formData.institution} onChange={set('institution')} />
                 </div>
               </div>
 
