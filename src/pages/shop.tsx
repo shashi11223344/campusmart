@@ -20,9 +20,13 @@ const Shop = () => {
   const addToCart = async (product: Product) => {
     try {
       await api.post('/wishlist', { productId: product.id });
-      alert('Product added to wishlist for cart sync.');
+      alert('Product added to cart!');
     } catch (err: any) {
-      alert(err.response?.data?.error || 'Please login to add products to wishlist.');
+      if (err.response?.status === 401) {
+        alert('Please login to add products to cart.');
+      } else {
+        alert(err.response?.data?.error || 'Failed to add to cart.');
+      }
     }
   };
 

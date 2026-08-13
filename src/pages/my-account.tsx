@@ -56,9 +56,17 @@ const MyAccount = () => {
     }
   };
 
-  const moveToCart = (productId: number) => {
-    alert('Moved to cart and kept in wishlist.');
-    // TODO: integrate with cart service when available.
+  const moveToCart = async (productId: number) => {
+    try {
+      await api.post('/wishlist', { productId });
+      alert('Product added to cart (wishlist).');
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        alert('Please login to add products to cart.');
+      } else {
+        alert(err.response?.data?.error || 'Failed to add to cart.');
+      }
+    }
   };
 
   const tabs = [
