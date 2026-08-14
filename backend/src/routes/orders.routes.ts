@@ -10,7 +10,7 @@ router.get('/', verifyToken, async (req: AuthRequest, res: Response) => {
     try {
         const orders = await prisma.order.findMany({
             where: { userId: req.user!.id },
-            include: { items: { include: { product: true } } },
+            include: { orderitem: { include: { product: true } } },
             orderBy: { createdAt: 'desc' },
         });
         res.json(orders);
@@ -34,8 +34,8 @@ router.post('/', verifyToken, async (req: AuthRequest, res: Response) => {
             return { productId: item.productId, qty: item.qty, unitPrice };
         });
         const order = await prisma.order.create({
-            data: { userId: req.user!.id, total, notes, items: { create: orderItems } },
-            include: { items: { include: { product: true } } },
+            data: { userId: req.user!.id, total, notes, orderitem: { create: orderItems } },
+            include: { orderitem: { include: { product: true } } },
         });
         res.status(201).json(order);
     } catch (err: unknown) {
@@ -48,7 +48,7 @@ router.post('/', verifyToken, async (req: AuthRequest, res: Response) => {
 router.get('/all', verifyToken, requireAdmin, async (_req: AuthRequest, res: Response) => {
     try {
         const orders = await prisma.order.findMany({
-            include: { user: { select: { name: true, email: true } }, items: { include: { product: true } } },
+            include: { user: { select: { name: true, email: true } }, orderitem: { include: { product: true } } },
             orderBy: { createdAt: 'desc' },
         });
         res.json(orders);

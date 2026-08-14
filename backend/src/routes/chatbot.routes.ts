@@ -1,4 +1,4 @@
-import { Router, Response } from 'express';
+import { Router, Request, Response } from 'express';
 import { verifyToken, AuthRequest } from '../middleware/auth.middleware';
 import { chatbotService } from '../services/chatbot.service';
 

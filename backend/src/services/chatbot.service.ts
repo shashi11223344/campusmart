@@ -100,7 +100,7 @@ Always respond in a structured manner with:
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {
-        orders: {
+        order: {
           orderBy: { createdAt: 'desc' },
           take: 3,
         },
@@ -112,10 +112,10 @@ Always respond in a structured manner with:
     let context = `\nUser Context:\n`;
     context += `- Name: ${user.name}\n`;
     context += `- Institution: ${user.institution || 'Not specified'}\n`;
-    context += `- Recent Orders: ${user.orders.length > 0 ? user.orders.length + ' orders' : 'None'}\n`;
+    context += `- Recent Orders: ${user.order.length > 0 ? user.order.length + ' orders' : 'None'}\n`;
 
-    if (user.orders.length > 0) {
-      context += `- Last Order Status: ${user.orders[0].status}\n`;
+    if (user.order.length > 0) {
+      context += `- Last Order Status: ${user.order[0].status}\n`;
     }
 
     return context;

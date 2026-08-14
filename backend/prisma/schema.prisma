@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,9 +17,9 @@ model Address {
   state     String
   pincode   String
   isDefault Boolean @default(false)
-  user      User    @relation(fields: [userId], references: [id], map: "Address_userId_fkey")
+  user      User    @relation(fields: [userId], references: [id], map: "Address_user_fkey")
 
-  @@index([userId], map: "Address_userId_fkey")
+  @@index([userId], map: "Address_userId_idx")
   @@map("address")
 }
 
@@ -45,9 +45,9 @@ model BlogPost {
   authorId     Int?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-  blogcategory BlogCategory? @relation(fields: [categoryId], references: [id], map: "BlogPost_categoryId_fkey")
+  blogcategory BlogCategory? @relation(fields: [categoryId], references: [id], map: "BlogPost_category_fkey")
 
-  @@index([categoryId], map: "BlogPost_categoryId_fkey")
+  @@index([categoryId], map: "BlogPost_categoryId_idx")
   @@map("blogpost")
 }
 
@@ -96,9 +96,9 @@ model Classified {
   status      String   @default("pending")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], map: "Classified_userId_fkey")
+  user        User     @relation(fields: [userId], references: [id], map: "Classified_user_fkey")
 
-  @@index([userId], map: "Classified_userId_fkey")
+  @@index([userId], map: "Classified_userId_idx")
   @@map("classified")
 }
 
@@ -123,10 +123,10 @@ model Order {
   notes     String?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  user      User        @relation(fields: [userId], references: [id], map: "Order_userId_fkey")
+  user      User        @relation(fields: [userId], references: [id], map: "Order_user_fkey")
   orderitem OrderItem[]
 
-  @@index([userId], map: "Order_userId_fkey")
+  @@index([userId], map: "Order_userId_idx")
   @@map("order")
 }
 
@@ -136,11 +136,11 @@ model OrderItem {
   productId Int
   qty       Int
   unitPrice Float
-  order     Order   @relation(fields: [orderId], references: [id], map: "OrderItem_orderId_fkey")
-  product   Product @relation(fields: [productId], references: [id], map: "OrderItem_productId_fkey")
+  order     Order   @relation(fields: [orderId], references: [id], map: "OrderItem_order_fkey")
+  product   Product @relation(fields: [productId], references: [id], map: "OrderItem_product_fkey")
 
-  @@index([orderId], map: "OrderItem_orderId_fkey")
-  @@index([productId], map: "OrderItem_productId_fkey")
+  @@index([orderId], map: "OrderItem_orderId_idx")
+  @@index([productId], map: "OrderItem_productId_idx")
   @@map("orderitem")
 }
 
@@ -190,10 +190,10 @@ model Product {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   orderitem      OrderItem[]
-  category       Category       @relation(fields: [categoryId], references: [id], map: "Product_categoryId_fkey")
+  category       Category       @relation(fields: [categoryId], references: [id], map: "Product_category_fkey")
   wishlistitem   WishlistItem[]
 
-  @@index([categoryId], map: "Product_categoryId_fkey")
+  @@index([categoryId], map: "Product_categoryId_idx")
   @@map("product")
 }
 
@@ -244,10 +244,10 @@ model WishlistItem {
   id        Int     @id @default(autoincrement())
   userId    Int
   productId Int
-  product   Product @relation(fields: [productId], references: [id], map: "WishlistItem_productId_fkey")
-  user      User    @relation(fields: [userId], references: [id], map: "WishlistItem_userId_fkey")
+  product   Product @relation(fields: [productId], references: [id], map: "WishlistItem_product_fkey")
+  user      User    @relation(fields: [userId], references: [id], map: "WishlistItem_user_fkey")
 
   @@unique([userId, productId], map: "WishlistItem_userId_productId_key")
-  @@index([productId], map: "WishlistItem_productId_fkey")
+  @@index([productId], map: "WishlistItem_productId_idx")
   @@map("wishlistitem")
 }

@@ -124,11 +124,11 @@ router.get('/', async (req: Request, res: Response) => {
         const where: any = all === 'true' ? {} : { published: true };
 
         if (category) {
-            where.category = { slug: String(category) };
+            where.blogcategory = { slug: String(category) };
         }
 
         const [posts, total] = await Promise.all([
-            prisma.blogPost.findMany({ where, skip, take: Number(limit), orderBy: { publishedAt: 'desc' }, include: { category: true } }),
+            prisma.blogPost.findMany({ where, skip, take: Number(limit), orderBy: { publishedAt: 'desc' }, include: { blogcategory: true } }),
             prisma.blogPost.count({ where }),
         ]);
         res.json({ posts, total, page: Number(page), limit: Number(limit) });
@@ -142,7 +142,7 @@ router.get('/:slug', async (req: Request, res: Response) => {
     try {
         const post = await prisma.blogPost.findFirst({
             where: { OR: [{ slug: String(req.params.slug) }, { id: Number(req.params.slug) || 0 }] },
-            include: { category: true }
+            include: { blogcategory: true }
         });
         if (!post) { res.status(404).json({ error: 'Post not found' }); return; }
         res.json(post);
@@ -165,7 +165,7 @@ router.post('/', verifyToken, requireAdmin, uploadImage.single('image'), async (
                 authorId: req.user!.id,
                 ...(categoryId && categoryId !== 'null' ? { categoryId: Number(categoryId) } : {})
             },
-            include: { category: true }
+            include: { blogcategory: true }
         });
         res.status(201).json(post);
     } catch (err: unknown) {
@@ -196,7 +196,7 @@ router.put('/:id', verifyToken, requireAdmin, uploadImage.single('image'), async
         const post = await prisma.blogPost.update({
             where: { id: Number(req.params.id) },
             data: updateData,
-            include: { category: true }
+            include: { blogcategory: true }
         });
         res.json(post);
     } catch {
