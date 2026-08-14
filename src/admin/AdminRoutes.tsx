@@ -17,7 +17,19 @@ const PagesManager = lazy(() => import('./pages/PagesManager'));
 const PageEditor = lazy(() => import('./pages/PageEditor'));
 const Categories = lazy(() => import('./pages/Categories'));
 
-const isLoggedIn = () => !!localStorage.getItem('cm_admin_token');
+const getAdminToken = () => localStorage.getItem('cm_admin_token') || localStorage.getItem('cm_token');
+
+const isLoggedIn = () => {
+  const token = getAdminToken();
+  const userRaw = localStorage.getItem('cm_user');
+  if (!token) return false;
+  try {
+    const user = userRaw ? JSON.parse(userRaw) : null;
+    return user?.role === 'admin';
+  } catch {
+    return false;
+  }
+};
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return isLoggedIn() ? <>{children}</> : <Navigate to="/admin/login" replace />;

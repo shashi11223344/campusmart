@@ -114,7 +114,7 @@ const MainHeader = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:block">
-            <ul ref={navRef} className="flex items-center gap-1">
+            <ul ref={navRef} className="flex items-center gap-0.5">
               {navItems.map((item) => (
                 <li key={item.label} className="relative">
                   {item.hasDropdown ? (
@@ -131,13 +131,13 @@ const MainHeader = () => {
                         <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen === item.label ? 'rotate-180' : ''}`} />
                       </Link>
                       {dropdownOpen === item.label && item.dropdownItems && (
-                        <div className="absolute top-full left-0 pt-2 w-48 z-[100] animate-fade-in">
-                          <div className="bg-white rounded-xl shadow-xl border border-slate-100 py-2">
+                        <div className="absolute top-full left-0 pt-2 z-[100] animate-fade-in">
+                          <div className="w-52 rounded-xl border border-slate-100 bg-white py-2 shadow-xl">
                             {item.dropdownItems.map((dropdownItem) => (
                               <Link
                                 key={dropdownItem.label}
                                 to={dropdownItem.href}
-                                className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-cm-blue hover:text-white transition-colors font-medium"
+                                className="block px-3 py-2 text-[11px] uppercase tracking-[0.12em] text-slate-700 hover:bg-cm-blue hover:text-white transition-colors font-semibold"
                               >
                                 {dropdownItem.label}
                               </Link>

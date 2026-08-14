@@ -22,6 +22,8 @@ export default function Login() {
                 return;
             }
             localStorage.setItem('cm_admin_token', data.accessToken);
+            localStorage.setItem('cm_token', data.accessToken);
+            localStorage.setItem('cm_user', JSON.stringify(data.user));
             navigate('/admin/dashboard');
         } catch (err: unknown) {
             const msg = (err as { response?: { data?: { error?: string } } }).response?.data?.error;

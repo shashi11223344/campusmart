@@ -10,9 +10,9 @@ interface ServiceItem { title: string; bgColor: string; textColor: string; href:
 
 const defaultServices: ServiceItem[] = [
   { title: 'Furniture Design+ Supply', bgColor: '#ef4444', textColor: '#ffffff', href: '/furniture' },
-  { title: 'Campus Design+ Execution', bgColor: '#a3e635', textColor: '#000000', href: '/campus-design' },
-  { title: 'Sports Design+ Execution', bgColor: '#06b6d4', textColor: '#ffffff', href: '/sports-infra' },
-  { title: 'AI/Digital Design+ Supply', bgColor: '#a855f7', textColor: '#ffffff', href: '/digital-transformation' },
+  { title: 'Campus Design+ Execution', bgColor: '#8fe635', textColor: '#000000', href: '/campus-design' },
+  { title: 'Sports Design+ Execution', bgColor: '#0eb7d8', textColor: '#ffffff', href: '/sports-infra' },
+  { title: 'AI/Digital Design+ Supply', bgColor: '#a450e8', textColor: '#ffffff', href: '/digital-transformation' },
 ];
 
 const ServiceCards = () => {
@@ -53,22 +53,21 @@ const ServiceCards = () => {
 
   return (
     <div ref={containerRef} className="w-full">
-      <div ref={cardsRef} className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full h-auto">
+      <div ref={cardsRef} className="flex w-full border-t border-b border-slate-200/70 overflow-hidden">
         {services.map(({ title, bgColor, textColor, href }) => (
           <Link
             key={title}
             to={href}
-            className="service-card group h-[220px] sm:h-[240px] lg:h-[260px] w-full rounded-xl shadow-sm"
+            className="service-card group flex-1 min-h-[170px] sm:min-h-[180px] lg:min-h-[190px] transition-all duration-300 hover:brightness-[0.98]"
             style={{ backgroundColor: bgColor, color: textColor }}
           >
-            <div className="flex h-full w-full flex-col items-center justify-center px-4 text-center">
-              <h3 className="group-hover:tracking-wider transition-all duration-300">
+            <div className="flex h-full w-full flex-col items-start justify-center px-5 sm:px-6 lg:px-8 py-5 text-left gap-6">
+              <h3 className="max-w-[16ch] text-[1.7rem] sm:text-[2rem] lg:text-[2.2rem] font-black uppercase leading-[0.95] tracking-[-0.04em] drop-shadow-[0_1px_0_rgba(0,0,0,0.12)] group-hover:translate-x-0.5 transition-transform duration-300">
                 {title}
               </h3>
-              <span
-                className="mt-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300 flex items-center gap-1"
-              >
-                Explore <span className="text-[14px]">→</span>
+
+              <span className="inline-flex items-center gap-2 text-[0.72rem] sm:text-[0.8rem] font-bold uppercase tracking-[0.14em] opacity-95">
+                Explore <span className="text-lg sm:text-xl leading-none">→</span>
               </span>
             </div>
           </Link>

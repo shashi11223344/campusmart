@@ -5,7 +5,7 @@ import { verifyToken, requireAdmin, AuthRequest } from '../middleware/auth.middl
 const router = Router();
 
 // GET /api/pages - get all pages (admin only to see unpublished)
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', verifyToken, requireAdmin, async (_req: AuthRequest, res: Response) => {
     try {
         const pages = await prisma.page.findMany({
             orderBy: { title: 'asc' }

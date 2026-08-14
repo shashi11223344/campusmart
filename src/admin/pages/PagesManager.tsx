@@ -496,11 +496,12 @@ function classifyPages(pages: Page[]): Group[] {
 }
 
 // ─── Page Card ────────────────────────────────────────────────────────────────
-function PageCard({ page, isEditing, onToggleEdit, onTogglePublish }: {
+function PageCard({ page, isEditing, onToggleEdit, onTogglePublish, onDelete }: {
     page: Page;
     isEditing: boolean;
     onToggleEdit: () => void;
     onTogglePublish: () => void;
+    onDelete: () => void;
 }) {
     return (
         <div className={`bg-white rounded-2xl border transition-all shadow-sm hover:shadow-md ${
@@ -535,16 +536,25 @@ function PageCard({ page, isEditing, onToggleEdit, onTogglePublish }: {
                     >
                         <LinkIcon className="w-3.5 h-3.5" /> View Live
                     </a>
-                    <button
-                        onClick={onToggleEdit}
-                        className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
-                            isEditing
-                                ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                : 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm shadow-blue-200'
-                        }`}
-                    >
-                        {isEditing ? <><X className="w-3.5 h-3.5" /> Close</> : <><Pencil className="w-3.5 h-3.5" /> Edit</>}
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={onDelete}
+                            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-all"
+                            title="Delete page"
+                        >
+                            <Trash2 className="w-3.5 h-3.5" /> Delete
+                        </button>
+                        <button
+                            onClick={onToggleEdit}
+                            className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+                                isEditing
+                                    ? 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm shadow-blue-200'
+                            }`}
+                        >
+                            {isEditing ? <><X className="w-3.5 h-3.5" /> Close</> : <><Pencil className="w-3.5 h-3.5" /> Edit</>}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -557,6 +567,9 @@ export default function PagesManager() {
     const [loading, setLoading] = useState(true);
     const [editingPage, setEditingPage] = useState<Page | null>(null);
     const [search, setSearch] = useState('');
+    const [creating, setCreating] = useState(false);
+    const [newTitle, setNewTitle] = useState('');
+    const [newSlug, setNewSlug] = useState('');
 
     const fetchPages = async () => {
         try {
@@ -571,6 +584,49 @@ export default function PagesManager() {
         try {
             await api.put(`/pages/${id}`, { published: !current });
             setPages(pp => pp.map(p => p.id === id ? { ...p, published: !current } : p));
+        } catch { /* noop */ }
+    };
+
+    const deletePage = async (id: number) => {
+        const target = pages.find(p => p.id === id);
+        if (!target) return;
+        const ok = window.confirm(`Delete page "${target.title}"? This cannot be undone.`);
+        if (!ok) return;
+
+        try {
+            await api.delete(`/pages/${id}`);
+            setPages(pp => pp.filter(p => p.id !== id));
+            if (editingPage?.id === id) setEditingPage(null);
+        } catch { /* noop */ }
+    };
+
+    const createPage = async () => {
+        const title = newTitle.trim();
+        if (!title) return;
+
+        const slug = (newSlug.trim() || title)
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '') || 'new-page';
+
+        try {
+            const { data } = await api.post('/pages', {
+                title,
+                slug,
+                template: null,
+                published: true,
+                pageData: JSON.stringify({
+                    heroTitle: title,
+                    heroSubtitle: 'New CMS-managed page.',
+                    section1Title: 'Overview',
+                    cards: []
+                })
+            });
+            setPages(pp => [data, ...pp]);
+            setEditingPage(data);
+            setNewTitle('');
+            setNewSlug('');
+            setCreating(false);
         } catch { /* noop */ }
     };
 
@@ -602,14 +658,53 @@ export default function PagesManager() {
                         <span className="font-semibold text-blue-600">{pages.length}</span> total pages · organised by hierarchy
                     </p>
                 </div>
-                <input
-                    type="text"
-                    placeholder="🔍  Search pages…"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 w-full sm:w-64 bg-white shadow-sm"
-                />
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <input
+                        type="text"
+                        placeholder="🔍  Search pages…"
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 w-full sm:w-64 bg-white shadow-sm"
+                    />
+                    <button
+                        onClick={() => setCreating(v => !v)}
+                        className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm shadow-blue-200 hover:bg-blue-700 transition-all"
+                    >
+                        <Plus className="w-4 h-4" />
+                        {creating ? 'Cancel' : 'New Page'}
+                    </button>
+                </div>
             </div>
+
+            {creating && (
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-4">
+                    <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
+                        <h3 className="text-xs font-black text-slate-800 uppercase tracking-[0.2em]">Create New Page</h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input
+                            value={newTitle}
+                            onChange={e => setNewTitle(e.target.value)}
+                            placeholder="Page title"
+                            className="border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                        />
+                        <input
+                            value={newSlug}
+                            onChange={e => setNewSlug(e.target.value)}
+                            placeholder="slug (optional)"
+                            className="border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                        />
+                    </div>
+                    <div className="flex justify-end">
+                        <button
+                            onClick={createPage}
+                            className="bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-700 transition-all"
+                        >
+                            Create Page
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Inline Editor panel */}
             {editingPage && (
@@ -640,6 +735,7 @@ export default function PagesManager() {
                                 isEditing={editingPage?.id === page.id}
                                 onToggleEdit={() => setEditingPage(editingPage?.id === page.id ? null : page)}
                                 onTogglePublish={() => togglePublish(page.id, page.published)}
+                                onDelete={() => deletePage(page.id)}
                             />
                         ))}
                     </div>

@@ -22,6 +22,7 @@ const Login = () => {
       localStorage.setItem('cm_token', data.accessToken);
       localStorage.setItem('cm_user', JSON.stringify(data.user));
       if (data.user?.role === 'admin') {
+        localStorage.setItem('cm_admin_token', data.accessToken);
         navigate('/admin/dashboard');
       } else {
         navigate('/my-account');

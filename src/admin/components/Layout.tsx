@@ -57,6 +57,8 @@ export default function Layout() {
 
     const handleLogout = () => {
         localStorage.removeItem('cm_admin_token');
+        localStorage.removeItem('cm_token');
+        localStorage.removeItem('cm_user');
         navigate('/admin/login');
     };
 

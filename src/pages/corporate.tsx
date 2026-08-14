@@ -295,14 +295,14 @@ const Corporate = () => {
       </section>
 
       {/* Careers Callout */}
-      <section id="careers" className="relative group overflow-hidden py-32 mx-4 mb-8 rounded-[4rem] shadow-2xl border-4 border-white/20">
+      <section id="careers" className="relative group overflow-hidden py-16 md:py-20 mx-4 mb-8 rounded-[2.5rem] shadow-xl border border-white/20">
         <div className="absolute inset-0 bg-cm-blue transition-colors duration-1000 group-hover:bg-cm-blue-dark" />
         <div className="relative z-10 w-full mx-auto px-4 sm:px-8 text-center text-white">
-          <h2 className="text-5xl md:text-8xl font-bold mb-10 tracking-tighter leading-none transform group-hover:scale-105 transition-transform">Be the change.</h2>
-          <p className="text-2xl text-white/70 max-w-2xl mx-auto mb-16 leading-relaxed">
+          <h2 className="text-3xl md:text-5xl font-bold mb-5 tracking-tighter leading-none transform group-hover:scale-[1.02] transition-transform">Be the change.</h2>
+          <p className="text-base md:text-lg text-white/75 max-w-2xl mx-auto mb-8 leading-relaxed">
             Join a consortium that's redefining how India learns. Your expertise can shape the future of thousands of campuses.
           </p>
-          <a href="/request-quote" className="btn-secondary inline-block px-16 py-6 text-2xl font-bold">
+          <a href="/request-quote" className="btn-secondary inline-block px-8 py-3 text-base md:text-lg font-bold rounded-full">
             Explore Openings
           </a>
         </div>
