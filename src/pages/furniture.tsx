@@ -92,18 +92,18 @@ const Furniture = () => {
               <Link 
                 key={cat.title} 
                 to="/shop" 
-                className="group bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_80px_-20px_rgba(15,23,42,0.28)] border border-slate-200/70 flex flex-col min-h-[360px]"
+                className="group bg-white rounded-xl overflow-hidden shadow-[0_10px_30px_-20px_rgba(15,23,42,0.3)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_15px_40px_-15px_rgba(15,23,42,0.2)] border border-slate-200/70 flex flex-col min-h-[180px]"
               >
-                <div className="relative overflow-hidden aspect-[4/5]">
+                <div className="relative overflow-hidden aspect-[2/1.5]">
                   <img src={cat.image} alt={cat.title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-slate-950/20 to-transparent" />
                 </div>
-                <div className="px-6 pb-6 pt-5 flex flex-col flex-grow">
-                  <h3 className="text-xl font-semibold text-slate-900 tracking-tight mb-3">{cat.title}</h3>
-                  <p className="text-sm text-slate-600 leading-relaxed mb-4 flex-grow">{cat.description || 'Premium campus furniture solutions designed for flexibility and durability.'}</p>
+                <div className="px-4 pb-4 pt-3 flex flex-col flex-grow">
+                  <h3 className="text-base font-semibold text-slate-900 tracking-tight mb-1">{cat.title}</h3>
+                  <p className="text-xs text-slate-600 leading-relaxed mb-2 flex-grow">{cat.description || 'Premium campus furniture solutions designed for flexibility and durability.'}</p>
                   <div className="flex items-center justify-between text-slate-700">
-                    <span className="text-xs uppercase tracking-[0.28em] text-slate-400">View specs</span>
-                    <ArrowRight className="h-4 w-4 text-cm-blue" />
+                    <span className="text-[10px] uppercase tracking-widest text-slate-400">View specs</span>
+                    <ArrowRight className="h-3 w-3 text-cm-blue" />
                   </div>
                 </div>
               </Link>
