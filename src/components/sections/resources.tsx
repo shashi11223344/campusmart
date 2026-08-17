@@ -93,10 +93,10 @@ const Resources = () => {
   }, []);
 
   return (
-    <section ref={containerRef} className="py-12 bg-[#f4f3ef] relative overflow-hidden">
+    <section ref={containerRef} className="py-4 md:py-6 bg-[#f4f3ef] relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-4 gap-4">
           <div className="max-w-2xl">
             <h2 ref={titleRef} className="text-3xl md:text-5xl font-extrabold text-[#12395b] tracking-tight">
               Resources & Catalogues

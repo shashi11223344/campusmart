@@ -101,7 +101,7 @@ const FeatureCards = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-8 sm:py-12 px-4 bg-[#f0f2f5]">
+    <section ref={sectionRef} className="py-2 sm:py-4 px-4 bg-[#f0f2f5]">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row gap-6 items-start">
 

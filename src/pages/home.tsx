@@ -5,11 +5,12 @@ import CategoryBar from '@/components/sections/category-bar';
 import TickerBar from '@/components/sections/ticker-bar';
 import SearchBar from '@/components/sections/search-bar';
 import HeroBanner from '@/components/sections/hero-banner';
-import ServiceCards from '@/components/sections/service-cards';
+import IntegratedSolutions from '@/components/sections/integrated-solutions';
 import FeatureCards from '@/components/sections/feature-cards';
-import CollaborationsTicker from '@/components/sections/collaborations-ticker';
 import Resources from '@/components/sections/resources';
 import PartnershipForm from '@/components/sections/partnership-form';
+import CollaborationsTicker from '@/components/sections/collaborations-ticker';
+import Ecosystem from '@/components/sections/ecosystem';
 
 export default function Home() {
   return (
@@ -20,11 +21,12 @@ export default function Home() {
       <TickerBar />
       <SearchBar />
       <HeroBanner />
-      <ServiceCards />
+      <IntegratedSolutions />
       <FeatureCards />
       <Resources />
       <PartnershipForm />
       <CollaborationsTicker />
+      <Ecosystem />
       <Footer />
     </div>
   );

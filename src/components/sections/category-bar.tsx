@@ -58,8 +58,8 @@ const CategoryBar = () => {
           {categories.map(({ icon: Icon, label, href }) => (
             <div key={label} className="relative group cursor-pointer">
               <Link to={href} className="flex flex-col items-center justify-center gap-1.5 px-2 hover:text-cm-blue transition-colors">
-                <div className="p-3 rounded-2xl transition-all duration-300 bg-gray-50 text-gray-600 group-hover:bg-blue-50 group-hover:text-cm-blue">
-                  <Icon className="w-6 h-6 md:w-7 h-7" />
+                <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-2xl transition-all duration-300 bg-gray-50 text-gray-600 group-hover:bg-blue-50 group-hover:text-cm-blue">
+                  <Icon className="w-6 h-6 md:w-7 md:h-7" />
                 </div>
                 <span className="text-[10px] md:text-[12px] font-bold whitespace-nowrap text-gray-700 tracking-tight group-hover:text-cm-blue transition-colors uppercase">
                   {label}

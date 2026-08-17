@@ -101,7 +101,6 @@ const Innovation = () => {
   );
 
   const heroTitle = data.heroTitle ?? DEFAULTS.heroTitle;
-  const cards: Card[] = (data.cards && data.cards.length > 0) ? data.cards : DEFAULTS.cards;
   const sections: Section[] = (data.sections && data.sections.length > 0) ? data.sections : DEFAULTS.sections;
 
   return (
@@ -117,7 +116,7 @@ const Innovation = () => {
       )}
 
       {/* Hero Banner Title */}
-      <section className="bg-cm-blue py-12 md:py-16 text-center text-white px-4">
+      <section className="bg-cm-blue py-12 md:py-16 text-center text-white px-4 mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] my-4">
         <div className="max-w-5xl mx-auto">
            <h1 className="text-2xl md:text-5xl font-black tracking-tight leading-tight md:leading-snug">
              {heroTitle}
@@ -125,41 +124,24 @@ const Innovation = () => {
         </div>
       </section>
 
-      {/* 4-Item Grid Cards Row */}
-      <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {cards.map((c, i) => (
-               <div key={i} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col items-start gap-4 hover:shadow-md transition-shadow">
-                  <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100 font-black text-slate-800 text-lg">
-                     {i+1}
-                  </div>
-                  <div>
-                     <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider mb-1">{c.title}</h3>
-                     <p className="text-slate-500 text-xs font-opensans leading-relaxed">{c.description}</p>
-                  </div>
-               </div>
-            ))}
-         </div>
-      </section>
-
       {/* Card-based detail grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {sections.map((sec, i) => (
-               <div key={i} className="group bg-white rounded-[2rem] overflow-hidden shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] border border-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_80px_-20px_rgba(15,23,42,0.28)]">
-                  <div className="relative overflow-hidden aspect-[4/3]">
+               <div key={i} className="group bg-white rounded-xl overflow-hidden shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] border border-slate-200/70 transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_80px_-20px_rgba(15,23,42,0.28)]">
+                  <div className="relative overflow-hidden aspect-[16/12]">
                      <img src={sec.image || 'https://via.placeholder.com/600x450?text=Innovation'} alt={sec.title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/30 to-transparent" />
-                     <div className="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.24em] text-slate-800 shadow-sm backdrop-blur-sm">
+                     <div className="absolute top-3 left-3 rounded-full bg-white/90 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-slate-800 shadow-sm backdrop-blur-sm">
                         0{i + 1}
                      </div>
                   </div>
-                  <div className="px-6 pb-6 pt-5">
-                     <div className="h-1 w-14 bg-cm-yellow rounded-full mb-3" />
-                     <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight mb-3">{sec.title}</h2>
-                     <p className="text-slate-600 text-sm md:text-base leading-relaxed font-opensans">{sec.description}</p>
-                     <div className="mt-5 flex items-center gap-1.5 text-xs font-bold text-cm-blue">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Managed Solutions Supported
+                  <div className="px-4 pb-4 pt-3">
+                     <div className="h-1 w-10 bg-cm-yellow rounded-full mb-2" />
+                     <h2 className="text-sm md:text-base font-black text-slate-900 tracking-tight mb-2 line-clamp-2">{sec.title}</h2>
+                     <p className="text-slate-600 text-xs md:text-sm leading-tight font-opensans line-clamp-2">{sec.description}</p>
+                     <div className="mt-3 flex items-center gap-1 text-[11px] font-bold text-cm-blue">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-500" /> Managed Solutions
                      </div>
                   </div>
                </div>

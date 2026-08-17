@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { Link } from 'react-router-dom';
-import { Building2, ArrowRight, DollarSign, Handshake } from 'lucide-react';
+import { BookOpen, FileText, ArrowRight, Download } from 'lucide-react';
 
-const Classifieds = () => {
+const Resources = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -12,10 +12,10 @@ const Classifieds = () => {
     return () => ctx.revert();
   }, []);
 
-  const listings = [
-    { title: 'Colleges for Sale', icon: Building2, desc: 'Browse educational institutions available for acquisition', link: '#' },
-    { title: 'Education Funding', icon: DollarSign, desc: 'Explore funding options for your institution', link: '#' },
-    { title: 'Partnership Opportunities', icon: Handshake, desc: 'Find partnership opportunities with running colleges', link: '/partnership' },
+  const resourcesList = [
+    { title: 'AI Implementation Guide', icon: BookOpen, desc: 'A comprehensive guide for implementing AI in educational institutions', link: '/ai-guide' },
+    { title: 'Setting Up a College in India', icon: FileText, desc: 'Step-by-step masterclass to establishing a new college in India', link: '/setup-college' },
+    { title: 'UGC Guidelines for Digital Campus', icon: Download, desc: 'Latest UGC guidelines for the digital transformation of campuses', link: '/ugc-guidelines' },
   ];
 
   return (
@@ -23,9 +23,9 @@ const Classifieds = () => {
       <section className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8">
         <div ref={heroRef} className="bg-gradient-to-r from-cm-blue to-blue-700 rounded-2xl py-8 sm:py-10 md:py-12 px-6 sm:px-8 lg:px-12 max-w-5xl mx-auto">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">Classifieds</h1>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">Resources & Guides</h1>
             <p className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-              Explore opportunities in the education sector. Colleges for sale, funding options, and partnerships.
+              Explore our curated guides, product catalogs, and official frameworks to inspire your next campus project.
             </p>
           </div>
         </div>
@@ -34,7 +34,7 @@ const Classifieds = () => {
       <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-gray-50 min-h-screen">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-            {listings.map((item) => (
+            {resourcesList.map((item) => (
               <Link key={item.title} to={item.link} className="bg-white rounded-2xl p-8 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-3 border border-gray-100">
                 <item.icon className="w-16 h-16 text-cm-blue mb-6" />
                 <h3 className="text-xl md:text-2xl font-bold text-cm-blue-dark mb-3">{item.title}</h3>
@@ -51,4 +51,4 @@ const Classifieds = () => {
   );
 };
 
-export default Classifieds;
+export default Resources;

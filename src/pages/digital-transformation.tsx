@@ -37,27 +37,29 @@ const DigitalTransformation = () => {
 
   return (
     <main className="min-h-screen">
-      <section ref={heroRef} className="relative h-[500px] overflow-hidden">
-        <img src={heroImage} alt={heroTitle} className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-cm-blue/90 to-cm-blue/60" />
-        <div className="relative w-full mx-auto px-2 sm:px-4 h-full flex items-center">
-          <div className="text-white max-w-2xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">{heroTitle}</h1>
-            <p className="text-xl text-white/90 mb-2">
-              {heroSubtitle}
-            </p>
-            <Link to="/request-quote" className="btn-secondary inline-flex items-center gap-2">
-              Start Transformation
-              <ArrowRight className="w-5 h-5" />
-            </Link>
+      <section className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8">
+        <div ref={heroRef} className="relative h-[300px] sm:h-[350px] md:h-[350px] overflow-hidden rounded-2xl max-w-5xl mx-auto">
+          <img src={heroImage} alt={heroTitle} className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-cm-blue/90 to-cm-blue/60" />
+          <div className="relative w-full mx-auto px-6 sm:px-8 h-full flex items-center">
+            <div className="text-white max-w-2xl">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">{heroTitle}</h1>
+              <p className="text-xl text-white/90 mb-2">
+                {heroSubtitle}
+              </p>
+              <Link to="/request-quote" className="btn-secondary inline-flex items-center gap-2">
+                Start Transformation
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-4">
-        <div className="w-full mx-auto px-2 sm:px-4 text-center">
-          <h2 className="text-3xl font-bold text-cm-blue-dark mb-6">{section1Title}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+      <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-cm-blue-dark mb-8">{section1Title}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {cards.map((c: CardItem) => (
               <div key={c.title} className="bg-white rounded-xl p-8 shadow-sm transition-shadow hover:shadow-sm-hover duration-300">
                 <h3 className="text-xl font-bold text-cm-blue-dark mb-4">{c.title}</h3>

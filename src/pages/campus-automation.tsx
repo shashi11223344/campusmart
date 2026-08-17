@@ -31,8 +31,8 @@ const CampusAutomation = () => {
 
   return (
     <main className="min-h-screen">
-      <section ref={heroRef} className="bg-cm-cyan py-6">
-        <div className="w-full mx-auto px-2 sm:px-4 text-center">
+      <section ref={heroRef} className="bg-cm-cyan mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] py-6 md:py-8 my-4">
+        <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">{heroTitle}</h1>
           <p className="text-xl text-white/80 max-w-3xl mx-auto">
             {heroSubtitle}

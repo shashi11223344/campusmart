@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Users, MessageSquare, Video, Presentation } from 'lucide-react';
 import { usePageData } from '@/hooks/usePageData';
 
-interface CardItem { title: string; description: string; }
+interface CardItem { title: string; description: string; image?: string; }
 
 const DEFAULTS = {
   heroTitle: 'Collaboration Spaces',
@@ -12,10 +12,10 @@ const DEFAULTS = {
   heroImage: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
   section1Title: 'Collaboration Features',
   cards: [
-    { title: 'Collaborative Spaces', description: 'Designed for teamwork and group projects' },
-    { title: 'Discussion Rooms', description: 'Private spaces for focused conversations' },
-    { title: 'Video Conferencing', description: 'Connect with remote participants seamlessly' },
-    { title: 'Presentation Areas', description: 'Equipped for effective presentations' }
+    { title: 'Collaborative Spaces', description: 'Designed for teamwork and group projects', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
+    { title: 'Discussion Rooms', description: 'Private spaces for focused conversations', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
+    { title: 'Video Conferencing', description: 'Connect with remote participants seamlessly', image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
+    { title: 'Presentation Areas', description: 'Equipped for effective presentations', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' }
   ] as CardItem[]
 };
 
@@ -58,7 +58,7 @@ const Collaboration = () => {
   return (
     <main className="min-h-screen bg-white">
       {/* Standard Corporate Hero */}
-      <section ref={heroRef} className="bg-cm-blue py-10 md:py-14">
+      <section ref={heroRef} className="bg-cm-blue py-10 md:py-14 mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] my-4">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <h1 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">
             {heroTitle}
@@ -100,20 +100,24 @@ const Collaboration = () => {
             <h2 className="text-2xl md:text-3xl font-bold text-cm-blue-dark tracking-tighter mb-8">
               {section1Title}
             </h2>
-            <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {cards.map((card, i) => {
                 const Icon = ICONS[i % ICONS.length];
                 return (
-                  <div key={card.title} 
-                       className="group p-8 bg-white border border-gray-100 rounded-2xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col items-start shadow-sm">
-                    <div className="w-16 h-16 bg-cm-blue/5 rounded-2xl flex items-center justify-center mb-6 border border-cm-blue/10 group-hover:bg-cm-blue transition-all duration-500 shadow-inner">
-                      <Icon className="w-8 h-8 text-cm-blue group-hover:text-white" />
+                  <div key={card.title} className="group bg-white border border-slate-200/70 rounded-[2rem] hover:shadow-[0_30px_80px_-20px_rgba(15,23,42,0.28)] transition duration-300 hover:-translate-y-1 flex flex-col shadow-[0_20px_60px_-30px_rgba(15,23,42,0.35)] min-h-[360px] overflow-hidden">
+                    <div className="relative overflow-hidden aspect-[4/5]">
+                      <img src={card.image} alt={card.title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/30 to-transparent" />
+                      <div className="absolute top-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/20 group-hover:bg-cm-blue group-hover:scale-110 transition-all duration-500">
+                        <Icon className="w-5 h-5 text-white" />
+                      </div>
                     </div>
-                    <h3 className="text-xl font-bold text-cm-blue-dark mb-3 tracking-tighter group-hover:text-cm-blue transition-colors leading-tight">{card.title}</h3>
-                    <p className="text-gray-500 text-xs leading-relaxed font-opensans flex-grow">{card.description}</p>
-                    <div className="mt-8 pt-6 border-t border-gray-50 w-full flex items-center gap-2">
-                      <Users className="w-4 h-4 text-cm-yellow" />
-                      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-cm-blue-dark/40">Synergy</span>
+                    <div className="px-6 pb-6 pt-5 flex-grow flex flex-col">
+                      <h3 className="text-xl font-semibold text-slate-900 tracking-tight mb-3">{card.title}</h3>
+                      <p className="text-sm text-slate-600 leading-relaxed mb-4 flex-grow">{card.description}</p>
+                      <div className="flex items-center justify-between text-slate-700">
+                         <span className="text-xs uppercase tracking-[0.28em] text-slate-400">Collaboration</span>
+                      </div>
                     </div>
                   </div>
                 );
