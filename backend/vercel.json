@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/index.ts",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": "dist/**"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/index.js"
+    }
+  ],
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "JWT_SECRET": "@jwt_secret",
+    "JWT_REFRESH_SECRET": "@jwt_refresh_secret",
+    "FRONTEND_URL": "@frontend_url",
+    "GROQ_API_KEY": "@groq_api_key",
+    "GROQ_MODEL": "@groq_model",
+    "CHATBOT_ENABLED": "@chatbot_enabled",
+    "EMAIL_HOST": "@email_host",
+    "EMAIL_PORT": "@email_port",
+    "EMAIL_SECURE": "@email_secure",
+    "EMAIL_USER": "@email_user",
+    "EMAIL_PASS": "@email_pass",
+    "EMAIL_FROM": "@email_from"
+  }
+}
