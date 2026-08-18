@@ -77,12 +77,12 @@ const ContactUs = () => {
         </div>
       </section>
 
-      <div className="w-full mx-auto px-2 sm:px-4 py-4">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Contact Form */}
-          <div className="lg:col-span-2">
+      <div className="w-full mx-auto px-2 sm:px-4 py-8">
+        <div className="flex flex-col gap-8">
+          {/* Contact Form - Centered */}
+          <div className="w-full max-w-2xl mx-auto">
             <div className="bg-white rounded-xl p-8 shadow-sm">
-              <h2 className="text-2xl font-bold text-cm-blue-dark mb-6">
+              <h2 className="text-3xl font-bold text-cm-blue-dark mb-8 text-center">
                 Send us a Message
               </h2>
               {submitted && (
@@ -227,7 +227,7 @@ const ContactUs = () => {
                     required
                   />
                 </div>
-                <button type="submit" disabled={submitting} className="btn-primary flex items-center gap-2 disabled:opacity-60">
+                <button type="submit" disabled={submitting} className="btn-primary flex items-center gap-2 disabled:opacity-60 w-full justify-center">
                   <Send className="w-5 h-5" />
                   {submitting ? 'Sending...' : 'Send Message'}
                 </button>
@@ -235,42 +235,40 @@ const ContactUs = () => {
             </div>
           </div>
 
-          {/* Contact Info */}
-          <div>
-            <div className="space-y-6">
-              {contactInfo.map(({ icon: Icon, title, content }) => (
-                <div key={title} className="bg-white rounded-xl p-6 shadow-sm">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-full bg-cm-blue/10 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-6 h-6 text-cm-blue" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-cm-blue-dark mb-2">{title}</h3>
-                      <p className="text-gray-600 whitespace-pre-line">{content}</p>
-                    </div>
+          {/* Contact Info - Grid Below Form */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {contactInfo.map(({ icon: Icon, title, content }) => (
+              <div key={title} className="bg-white rounded-xl p-6 shadow-sm">
+                <div className="flex flex-col items-center gap-4 text-center">
+                  <div className="w-12 h-12 rounded-full bg-cm-blue/10 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-6 h-6 text-cm-blue" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-cm-blue-dark mb-2">{title}</h3>
+                    <p className="text-gray-600 whitespace-pre-line">{content}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-
-            {/* WhatsApp CTA */}
-            <div className="bg-green-500 rounded-xl p-6 mt-6 text-white">
-              <div className="flex items-center gap-3 mb-4">
-                <MessageCircle className="w-8 h-8" />
-                <h3 className="text-xl font-bold">Chat on WhatsApp</h3>
               </div>
-              <p className="text-white/90 mb-4">
-                Get instant support through WhatsApp. We're available during business hours.
-              </p>
-              <a
-                href="https://wa.me/919966109191"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block px-6 py-3 bg-white text-green-600 rounded-full font-semibold hover:bg-gray-100 transition-colors"
-              >
-                Start Chat
-              </a>
+            ))}
+          </div>
+
+          {/* WhatsApp CTA */}
+          <div className="bg-green-500 rounded-xl p-6 text-white max-w-2xl mx-auto w-full">
+            <div className="flex items-center gap-3 mb-4">
+              <MessageCircle className="w-8 h-8" />
+              <h3 className="text-xl font-bold">Chat on WhatsApp</h3>
             </div>
+            <p className="text-white/90 mb-4">
+              Get instant support through WhatsApp. We're available during business hours.
+            </p>
+            <a
+              href="https://wa.me/919966109191"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-6 py-3 bg-white text-green-600 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Start Chat
+            </a>
           </div>
         </div>
       </div>

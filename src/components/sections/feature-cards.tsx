@@ -241,16 +241,6 @@ const FeatureCards = () => {
               </ul>
             </div>
 
-            {/* Job Openings */}
-            <div className="bg-white rounded-xl overflow-hidden shadow-md">
-              <div className="px-4 py-2.5 border-b border-gray-100">
-                <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-500">Job Openings</h3>
-              </div>
-              <div className="px-4 py-3">
-                <p className="text-xs text-gray-500 italic">Join with us as Influencers</p>
-              </div>
-            </div>
-
             {contacts.map(({ bg, title, contact, href, queryText }: any) => (
               <a
                 key={title}

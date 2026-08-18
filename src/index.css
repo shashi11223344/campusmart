@@ -98,11 +98,11 @@
   }
 
   .main-header.scrolled .header-inner {
-    @apply h-14;
+    @apply h-12;
   }
 
   .header-inner {
-    @apply h-16 transition-all duration-300;
+    @apply h-12 sm:h-14 transition-all duration-300;
   }
 
   /* Navigation Styles */
