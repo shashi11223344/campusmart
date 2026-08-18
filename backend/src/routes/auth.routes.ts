@@ -7,6 +7,8 @@ import { verifyToken, AuthRequest } from '../middleware/auth.middleware';
 
 const router = Router();
 
+const normalizeEmail = (value: string) => value.trim().toLowerCase();
+
 const generateTokens = (user: { id: number; email: string; role: string }) => {
     const accessToken = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
@@ -24,17 +26,19 @@ router.post('/send-otp', async (req: Request, res: Response) => {
         const { email, purpose = 'verify' } = req.body;
         if (!email) { res.status(400).json({ error: 'Email is required' }); return; }
 
+        const normalizedEmail = normalizeEmail(email);
+
         // Invalidate old unused OTPs for this email+purpose
         await prisma.otpCode.updateMany({
-            where: { email, purpose, used: false },
+            where: { email: normalizedEmail, purpose, used: false },
             data: { used: true },
         });
 
         const code = generateOtp();
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-        await prisma.otpCode.create({ data: { email, code, purpose, expiresAt } });
-        await sendOtpEmail(email, code, purpose as 'verify' | 'login');
+        await prisma.otpCode.create({ data: { email: normalizedEmail, code, purpose, expiresAt } });
+        await sendOtpEmail(normalizedEmail, code, purpose as 'verify' | 'login');
 
         res.json({ message: 'OTP sent successfully' });
     } catch (err) {
@@ -50,8 +54,10 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
         const { email, code, purpose = 'verify' } = req.body;
         if (!email || !code) { res.status(400).json({ error: 'Email and code are required' }); return; }
 
+        const normalizedEmail = normalizeEmail(email);
+
         const record = await prisma.otpCode.findFirst({
-            where: { email, code, purpose, used: false },
+            where: { email: normalizedEmail, code, purpose, used: false },
             orderBy: { createdAt: 'desc' },
         });
 
@@ -84,12 +90,16 @@ router.post('/register', async (req: Request, res: Response) => {
             res.status(400).json({ error: 'Name, email, and password are required' });
             return;
         }
-        const exists = await prisma.user.findUnique({ where: { email } });
+
+        const normalizedEmail = normalizeEmail(email);
+        const exists = await prisma.user.findFirst({
+            where: { email: { equals: normalizedEmail, mode: 'insensitive' } }
+        });
         if (exists) { res.status(409).json({ error: 'Email already registered' }); return; }
 
         const passwordHash = await bcrypt.hash(password, 10);
         const user = await prisma.user.create({
-            data: { name, email, passwordHash, phone, institution, emailVerified: false },
+            data: { name, email: normalizedEmail, passwordHash, phone, institution, emailVerified: false },
         });
         const tokens = generateTokens(user);
         res.status(201).json({
@@ -107,7 +117,11 @@ router.post('/login', async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) { res.status(400).json({ error: 'Email and password required' }); return; }
-        const user = await prisma.user.findUnique({ where: { email } });
+
+        const normalizedEmail = normalizeEmail(email);
+        const user = await prisma.user.findFirst({
+            where: { email: { equals: normalizedEmail, mode: 'insensitive' } }
+        });
         if (!user) { res.status(401).json({ error: 'Invalid credentials' }); return; }
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) { res.status(401).json({ error: 'Invalid credentials' }); return; }

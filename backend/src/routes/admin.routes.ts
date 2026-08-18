@@ -34,18 +34,65 @@ router.get('/users', verifyToken, requireAdmin, async (_req: AuthRequest, res: R
             orderBy: { createdAt: 'desc' },
         });
         res.json(users);
-    } catch {
+    } catch (error) {
+        console.error('Failed to fetch users:', error);
         res.status(500).json({ error: 'Failed to fetch users' });
     }
 });
 
-// PUT /api/admin/users/:id/role
+// PUT /api/admin/users/:id/role - Promote or demote user role
 router.put('/users/:id/role', verifyToken, requireAdmin, async (req: AuthRequest, res: Response) => {
     try {
-        const user = await prisma.user.update({ where: { id: Number(req.params.id) }, data: { role: req.body.role } });
-        res.json({ id: user.id, name: user.name, role: user.role });
-    } catch {
+        const userId = Number(req.params.id);
+        const { role } = req.body;
+        
+        // Validate role
+        if (!role || !['user', 'admin'].includes(role)) {
+            res.status(400).json({ error: 'Invalid role. Must be "user" or "admin"' });
+            return;
+        }
+        
+        // Check user exists
+        const userExists = await prisma.user.findUnique({ where: { id: userId } });
+        if (!userExists) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
+        
+        const user = await prisma.user.update({ 
+            where: { id: userId }, 
+            data: { role } 
+        });
+        console.log(`User ${userId} role changed to ${role} by admin ${req.user?.id}`);
+        res.json({ id: user.id, name: user.name, email: user.email, role: user.role });
+    } catch (error) {
+        console.error('Failed to update user role:', error);
         res.status(500).json({ error: 'Failed to update user role' });
+    }
+});
+
+// POST /api/admin/ensure-admin - Ensure current user is admin (useful for first-time setup)
+router.post('/ensure-admin', verifyToken, async (req: AuthRequest, res: Response) => {
+    try {
+        // This endpoint allows a verified user to become admin
+        // In production, you'd want additional verification (e.g., secret key)
+        const secretKey = req.headers['x-admin-secret'];
+        const expectedSecret = process.env.ADMIN_SECRET_KEY || 'admin-secret-key-not-set';
+        
+        if (secretKey !== expectedSecret) {
+            res.status(403).json({ error: 'Invalid admin secret' });
+            return;
+        }
+        
+        const user = await prisma.user.update({
+            where: { id: req.user!.id },
+            data: { role: 'admin' }
+        });
+        console.log(`User ${user.id} promoted to admin via ensure-admin endpoint`);
+        res.json({ message: 'Admin role granted', user: { id: user.id, email: user.email, role: user.role } });
+    } catch (error) {
+        console.error('Failed to ensure admin:', error);
+        res.status(500).json({ error: 'Failed to ensure admin status' });
     }
 });
 

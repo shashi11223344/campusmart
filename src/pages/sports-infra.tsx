@@ -123,7 +123,9 @@ const SportsInfra = () => {
   const section1Title = data.section1Title ?? DEFAULTS.section1Title;
   const section2Title = data.section2Title ?? DEFAULTS.section2Title;
   const categoryOptions = ['All', 'Outdoor', 'Indoor', 'Kids', 'Adults', 'Training'];
-  const allCards = (data.cards && data.cards.length > 0) ? data.cards : DEFAULTS.cards;
+  // Use CMS cards only if they have proper categories; otherwise use DEFAULTS
+  const hasValidCmsCards = data.cards && data.cards.length > 0 && data.cards.some((card: any) => card.categories?.length);
+  const allCards = hasValidCmsCards ? data.cards : DEFAULTS.cards;
   const cards = allCards.map((card: any) => ({
     ...card,
     categories: card.categories?.length ? card.categories : ['All'],

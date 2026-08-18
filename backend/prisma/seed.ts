@@ -25,19 +25,36 @@ async function main() {
     console.log('🌱 Seeding database...');
 
     // Admin user
+    const adminEmail = 'admin@campusmart.in';
     const adminHash = await bcrypt.hash('Admin@1234', 10);
-    await withRetry(() => prisma.user.upsert({
-        where: { email: 'admin@campusmart.in' },
-        update: {},
-        create: {
-            name: 'CampusMart Admin',
-            email: 'admin@campusmart.in',
-            passwordHash: adminHash,
-            role: 'admin',
-            phone: '+91 98765 00000',
-            institution: 'CampusMart',
-        },
-    }));
+    const existingAdmin = await prisma.user.findFirst({
+        where: { email: { equals: adminEmail, mode: 'insensitive' } },
+    });
+
+    if (existingAdmin) {
+        await withRetry(() => prisma.user.update({
+            where: { id: existingAdmin.id },
+            data: {
+                email: adminEmail,
+                passwordHash: adminHash,
+                role: 'admin',
+                name: 'CampusMart Admin',
+                phone: '+91 98765 00000',
+                institution: 'CampusMart',
+            },
+        }));
+    } else {
+        await withRetry(() => prisma.user.create({
+            data: {
+                name: 'CampusMart Admin',
+                email: adminEmail,
+                passwordHash: adminHash,
+                role: 'admin',
+                phone: '+91 98765 00000',
+                institution: 'CampusMart',
+            },
+        }));
+    }
 
     // Demo user
     const userHash = await bcrypt.hash('User@1234', 10);

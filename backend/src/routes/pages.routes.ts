@@ -10,8 +10,10 @@ router.get('/', verifyToken, requireAdmin, async (_req: AuthRequest, res: Respon
         const pages = await prisma.page.findMany({
             orderBy: { title: 'asc' }
         });
+        console.log(`Admin ${_req.user?.id} fetched ${pages.length} pages`);
         res.json(pages);
-    } catch {
+    } catch (error) {
+        console.error('Failed to fetch pages:', error);
         res.status(500).json({ error: 'Failed to fetch pages' });
     }
 });
@@ -51,11 +53,22 @@ router.get('/:idOrSlug', async (req: Request, res: Response) => {
 // POST /api/pages - create a page
 router.post('/', verifyToken, requireAdmin, async (req: AuthRequest, res: Response) => {
     try {
+        // Validate required fields
+        if (!req.body.title || !req.body.slug) {
+            res.status(400).json({ error: 'Title and slug are required' });
+            return;
+        }
+
         const page = await prisma.page.create({
-            data: req.body
+            data: {
+                ...req.body,
+                published: req.body.published !== undefined ? req.body.published : true
+            }
         });
+        console.log(`Page created by admin ${req.user?.id}: ${page.slug}`);
         res.status(201).json(page);
-    } catch {
+    } catch (error) {
+        console.error('Failed to create page:', error);
         res.status(500).json({ error: 'Failed to create page' });
     }
 });
@@ -64,12 +77,33 @@ router.post('/', verifyToken, requireAdmin, async (req: AuthRequest, res: Respon
 router.put('/:id', verifyToken, requireAdmin, async (req: AuthRequest, res: Response) => {
     try {
         const id = parseInt(req.params.id as string);
+        
+        // Validate ID
+        if (isNaN(id)) {
+            res.status(400).json({ error: 'Invalid page ID' });
+            return;
+        }
+
+        // Check page exists before attempting update
+        const existing = await prisma.page.findUnique({ where: { id } });
+        if (!existing) {
+            res.status(404).json({ error: 'Page not found' });
+            return;
+        }
+
+        // Update page
         const page = await prisma.page.update({
             where: { id },
-            data: req.body
+            data: {
+                ...req.body,
+                updatedAt: new Date() // Ensure updatedAt is set
+            }
         });
+        
+        console.log(`Page ${id} updated by admin ${req.user?.id}`);
         res.json(page);
-    } catch {
+    } catch (error) {
+        console.error(`Failed to update page ${req.params.id}:`, error);
         res.status(500).json({ error: 'Failed to update page' });
     }
 });
@@ -78,11 +112,27 @@ router.put('/:id', verifyToken, requireAdmin, async (req: AuthRequest, res: Resp
 router.delete('/:id', verifyToken, requireAdmin, async (req: AuthRequest, res: Response) => {
     try {
         const id = parseInt(req.params.id as string);
+        
+        // Validate ID
+        if (isNaN(id)) {
+            res.status(400).json({ error: 'Invalid page ID' });
+            return;
+        }
+
+        // Check page exists before attempting delete
+        const existing = await prisma.page.findUnique({ where: { id } });
+        if (!existing) {
+            res.status(404).json({ error: 'Page not found' });
+            return;
+        }
+
         await prisma.page.delete({
             where: { id }
         });
+        console.log(`Page ${id} deleted by admin ${req.user?.id}`);
         res.status(204).end();
-    } catch {
+    } catch (error) {
+        console.error(`Failed to delete page ${req.params.id}:`, error);
         res.status(500).json({ error: 'Failed to delete page' });
     }
 });

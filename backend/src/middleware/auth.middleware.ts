@@ -16,17 +16,29 @@ export const verifyToken = async (req: AuthRequest, res: Response, next: NextFun
     const token = authHeader.split(' ')[1];
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: number; email: string; role: string };
+        // Always fetch fresh user data from database to ensure current role and status
         const user = await prisma.user.findUnique({ where: { id: decoded.id } });
-        if (!user) { res.status(401).json({ error: 'User not found' }); return; }
-        req.user = { id: user.id, email: user.email, role: user.role };
+        if (!user) { 
+            res.status(401).json({ error: 'User not found' }); 
+            return; 
+        }
+        // Use database role, not JWT role, for accurate permission checks
+        req.user = { id: user.id, email: user.email, role: user.role || 'user' };
         next();
-    } catch {
+    } catch (error) {
+        console.error('Token verification error:', error);
         res.status(401).json({ error: 'Invalid token' });
     }
 };
 
 export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (req.user?.role !== 'admin') {
+    if (!req.user) {
+        res.status(401).json({ error: 'Not authenticated' });
+        return;
+    }
+    // Strict admin check - role must be exactly 'admin'
+    if (req.user.role !== 'admin') {
+        console.warn(`Admin access denied for user ${req.user.id} with role: ${req.user.role}`);
         res.status(403).json({ error: 'Admin access required' });
         return;
     }

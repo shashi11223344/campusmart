@@ -437,26 +437,110 @@ const PAGE_DATA: Record<string, object> = {
             { title: 'Sports Equipment', description: 'Sports goods for indoor and outdoor activities', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
         ],
     },
+    'services': {
+        heroTitle: 'Our Services',
+        heroSubtitle: 'Comprehensive campus transformation services from master planning to final execution.',
+        cards: [
+            {
+                title: 'Campus Design & Execution',
+                description: 'Comprehensive master planning and architectural design services tailoring educational spaces for future-ready learning.',
+                href: '/campus-design-execution',
+                color: 'bg-blue-600'
+            },
+            {
+                title: 'Furniture Design & Supply',
+                description: 'Ergonomic and modular furniture solutions for classrooms, laboratories, libraries, and administrative offices.',
+                href: '/furniture-design-supply',
+                color: 'bg-cm-green'
+            },
+            {
+                title: 'Sports Design & Execution',
+                description: 'Premier sports infrastructure including synthetic tracks, indoor courts, and outdoor recreational areas.',
+                href: '/sports-design-execution',
+                color: 'bg-cm-yellow'
+            },
+            {
+                title: 'AI/Digital Solutions',
+                description: 'Physical and digital integrations including smart classes, AI labs, and digital infrastructure for modern education.',
+                href: '/ai-digital-design-supply',
+                color: 'bg-purple-600'
+            }
+        ]
+    },
+    'solutions': {
+        heroTitle: 'Functional Solutions',
+        heroSubtitle: 'Specialized environments optimized for specific learning outcomes and operational efficiency.',
+        cards: [
+            {
+                title: 'Laboratories',
+                description: 'Advanced science and technology labs equipped with modern safety and learning tools.',
+                href: '/labs',
+                color: 'bg-cm-blue'
+            },
+            {
+                title: 'Libraries',
+                description: 'Next-generation libraries combining traditional resources with digital learning environments.',
+                href: '/libraries',
+                color: 'bg-cm-yellow'
+            },
+            {
+                title: 'Innovation Centres',
+                description: 'Dedicated spaces for creative thinking, prototyping, and interdisciplinary collaboration.',
+                href: '/innovation-centres',
+                color: 'bg-cm-green'
+            },
+            {
+                title: 'Learning Environments',
+                description: 'Flexible classrooms and open spaces designed for active, collaborative learning.',
+                href: '/new-environments',
+                color: 'bg-orange-500'
+            },
+            {
+                title: 'AI Stations',
+                description: 'Dedicated hubs for artificial intelligence exploration and digital literacy.',
+                href: '/ai-stations',
+                color: 'bg-purple-600'
+            }
+        ]
+    },
 };
 
 async function seed() {
     console.log('🌱 Running production seed...');
 
     // ── Admin user ────────────────────────────────────────────────────────
+    const adminEmail = 'admin@campusmart.in';
     const adminHash = await bcrypt.hash('Admin@1234', 10);
-    await prisma.user.upsert({
-        where: { email: 'admin@campusmart.in' },
-        update: {},
-        create: {
-            name: 'CampusMart Admin',
-            email: 'admin@campusmart.in',
-            passwordHash: adminHash,
-            role: 'admin',
-            emailVerified: true,
-            phone: '+91 98765 00000',
-            institution: 'CampusMart',
-        },
+    const existingAdmin = await prisma.user.findFirst({
+        where: { email: { equals: adminEmail, mode: 'insensitive' } },
     });
+
+    if (existingAdmin) {
+        await prisma.user.update({
+            where: { id: existingAdmin.id },
+            data: {
+                email: adminEmail,
+                passwordHash: adminHash,
+                role: 'admin',
+                emailVerified: true,
+                name: 'CampusMart Admin',
+                phone: '+91 98765 00000',
+                institution: 'CampusMart',
+            },
+        });
+    } else {
+        await prisma.user.create({
+            data: {
+                name: 'CampusMart Admin',
+                email: adminEmail,
+                passwordHash: adminHash,
+                role: 'admin',
+                emailVerified: true,
+                phone: '+91 98765 00000',
+                institution: 'CampusMart',
+            },
+        });
+    }
     console.log('✓ Admin user ready: admin@campusmart.in / Admin@1234');
 
     // ── Hero banner ───────────────────────────────────────────────────────
@@ -616,6 +700,8 @@ async function seed() {
         { slug: 'new-environments', title: 'New Learning Environments', template: 'new-environments' },
         { slug: 'partnership', title: 'Partnership', template: 'partnership' },
         { slug: 'privacy-policy', title: 'Privacy Policy', template: 'privacy-policy' },
+        { slug: 'services', title: 'Our Services', template: 'services' },
+        { slug: 'solutions', title: 'Functional Solutions', template: 'solutions' },
         { slug: 'setup-college', title: 'Setup Your College', template: 'setup-college' },
         { slug: 'shop', title: 'Shop', template: 'shop' },
         { slug: 'sports-design-execution', title: 'Sports Design & Execution', template: 'sports-design-execution' },

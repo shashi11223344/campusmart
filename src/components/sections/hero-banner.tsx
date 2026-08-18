@@ -52,7 +52,7 @@ const HeroBanner = () => {
       ref={containerRef}
       className="relative overflow-hidden w-full"
       style={{
-        minHeight: '650px',
+        minHeight: '480px',
         backgroundImage: `linear-gradient(90deg,rgba(2,22,50,.96) 0%,rgba(2,22,50,.83) 42%,rgba(2,22,50,.24) 78%), url('${heroData.image}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -85,7 +85,7 @@ const HeroBanner = () => {
               </p>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3 mb-12">
+              <div className="flex flex-wrap gap-3">
                 <a 
                   href="/request-quote" 
                   className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 text-blue-900 font-black rounded-md hover:bg-yellow-300 transition-all duration-300 text-sm sm:text-base"
@@ -98,26 +98,6 @@ const HeroBanner = () => {
                 >
                   Schedule Campus Audit →
                 </a>
-              </div>
-
-              {/* Stats Section */}
-              <div className="flex flex-wrap gap-8 sm:gap-12">
-                <div>
-                  <div className="text-2xl sm:text-3xl font-black text-white">500+</div>
-                  <div className="text-xs sm:text-sm text-blue-200">Campus Projects</div>
-                </div>
-                <div>
-                  <div className="text-2xl sm:text-3xl font-black text-white">25M+</div>
-                  <div className="text-xs sm:text-sm text-blue-200">Sq. Ft. Delivered</div>
-                </div>
-                <div>
-                  <div className="text-2xl sm:text-3xl font-black text-white">250+</div>
-                  <div className="text-xs sm:text-sm text-blue-200">Institutions Served</div>
-                </div>
-                <div>
-                  <div className="text-2xl sm:text-3xl font-black text-white">20+</div>
-                  <div className="text-xs sm:text-sm text-blue-200">Years of Excellence</div>
-                </div>
               </div>
             </div>
           </div>

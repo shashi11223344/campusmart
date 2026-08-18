@@ -161,9 +161,9 @@ model Page {
   id        Int      @id @default(autoincrement())
   title     String
   slug      String   @unique(map: "Page_slug_key")
-  content   String?
+  content   String?  @db.Text
   template  String?
-  pageData  String?
+  pageData  String?  @db.Text
   published Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

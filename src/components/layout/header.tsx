@@ -3,6 +3,13 @@ import gsap from 'gsap';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
+interface NavItem {
+  label: string;
+  href: string | null;
+  hasDropdown?: boolean;
+  dropdownItems?: { label: string; href: string }[];
+}
+
 const MainHeader = () => {
   const headerRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
@@ -47,7 +54,7 @@ const MainHeader = () => {
     return () => ctx.revert();
   }, []);
 
-  const navItems = [
+  const navItems: NavItem[] = [
     { label: 'Home', href: '/' },
     {
       label: 'Corporate',
@@ -62,7 +69,7 @@ const MainHeader = () => {
     },
     {
       label: 'Services',
-      href: '/services', // non-clickable parent or links to first item
+      href: null, // dropdown only, no page navigation
       hasDropdown: true,
       dropdownItems: [
         { label: 'Campus Design & Execution', href: '/campus-design-execution' },
@@ -73,7 +80,7 @@ const MainHeader = () => {
     },
     {
       label: 'Solutions',
-      href: '/solutions',
+      href: null, // dropdown only, no page navigation
       hasDropdown: true,
       dropdownItems: [
         { label: 'Laboratories', href: '/labs' },
@@ -89,7 +96,8 @@ const MainHeader = () => {
     { label: 'Contact Us', href: '/contact-us' },
   ];
 
-  const isActive = (path: string) => {
+  const isActive = (path?: string | null) => {
+    if (!path) return false;
     if (path === '/') {
       return location.pathname === '/';
     }
@@ -123,13 +131,25 @@ const MainHeader = () => {
                       onMouseEnter={() => setDropdownOpen(item.label)}
                       onMouseLeave={() => setDropdownOpen(null)}
                     >
-                      <Link
-                        to={item.href}
-                        className={`nav-link flex items-center gap-1 ${isActive(item.href) ? 'bg-cm-blue text-white rounded-full' : ''}`}
-                      >
-                        {item.label}
-                        <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen === item.label ? 'rotate-180' : ''}`} />
-                      </Link>
+                      {item.href ? (
+                        // Regular link with dropdown
+                        <Link
+                          to={item.href}
+                          className={`nav-link flex items-center gap-1 ${isActive(item.href) ? 'bg-cm-blue text-white rounded-full' : ''}`}
+                        >
+                          {item.label}
+                          <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen === item.label ? 'rotate-180' : ''}`} />
+                        </Link>
+                      ) : (
+                        // Dropdown-only button (no navigation)
+                        <button
+                          className="nav-link flex items-center gap-1 cursor-pointer"
+                          onClick={() => setDropdownOpen(dropdownOpen === item.label ? null : item.label)}
+                        >
+                          {item.label}
+                          <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen === item.label ? 'rotate-180' : ''}`} />
+                        </button>
+                      )}
                       {dropdownOpen === item.label && item.dropdownItems && (
                         <div className="absolute top-full left-0 pt-2 z-[100] animate-fade-in">
                           <div className="w-52 rounded-xl border border-slate-100 bg-white py-2 shadow-xl">
@@ -146,14 +166,14 @@ const MainHeader = () => {
                         </div>
                       )}
                     </div>
-                  ) : (
+                  ) : item.href ? (
                     <Link
                       to={item.href}
                       className={`nav-link ${isActive(item.href) ? 'bg-cm-blue text-white rounded-full' : ''}`}
                     >
                       {item.label}
                     </Link>
-                  )}
+                  ) : null}
                 </li>
               ))}
             </ul>
@@ -182,7 +202,7 @@ const MainHeader = () => {
                   {item.hasDropdown ? (
                     <div>
                       <button
-                        className={`w-full text-left px-4 py-2 text-sm font-semibold uppercase hover:bg-cm-blue hover:text-white rounded-lg transition-colors flex items-center justify-between ${isActive(item.href) ? 'bg-cm-blue text-white' : ''}`}
+                        className={`w-full text-left px-4 py-2 text-sm font-semibold uppercase hover:bg-cm-blue hover:text-white rounded-lg transition-colors flex items-center justify-between ${item.href && isActive(item.href) ? 'bg-cm-blue text-white' : ''}`}
                         onClick={() => setDropdownOpen(dropdownOpen === item.label ? null : item.label)}
                       >
                         {item.label}
@@ -203,7 +223,7 @@ const MainHeader = () => {
                         </div>
                       )}
                     </div>
-                  ) : (
+                  ) : item.href ? (
                     <Link
                       to={item.href}
                       className={`block px-4 py-2 text-sm font-semibold uppercase hover:bg-cm-blue hover:text-white rounded-lg transition-colors ${isActive(item.href) ? 'bg-cm-blue text-white' : ''}`}
@@ -211,7 +231,7 @@ const MainHeader = () => {
                     >
                       {item.label}
                     </Link>
-                  )}
+                  ) : null}
                 </li>
               ))}
             </ul>
