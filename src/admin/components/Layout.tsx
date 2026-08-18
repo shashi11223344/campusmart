@@ -56,6 +56,9 @@ export default function Layout() {
     const location = useLocation();
 
     const handleLogout = () => {
+        sessionStorage.removeItem('cm_admin_token');
+        sessionStorage.removeItem('cm_token');
+        sessionStorage.removeItem('cm_user');
         localStorage.removeItem('cm_admin_token');
         localStorage.removeItem('cm_token');
         localStorage.removeItem('cm_user');

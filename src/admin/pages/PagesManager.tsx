@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Eye, EyeOff, Pencil, X, Save, Plus, Trash2, Link as LinkIcon } from 'lucide-react';
 import api from '../api/client';
 import { pageDefaults } from '../pageDefaults';
@@ -570,6 +570,13 @@ export default function PagesManager() {
     const [creating, setCreating] = useState(false);
     const [newTitle, setNewTitle] = useState('');
     const [newSlug, setNewSlug] = useState('');
+    const editorAnchorRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (editingPage && editorAnchorRef.current) {
+            editorAnchorRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [editingPage]);
 
     const fetchPages = async () => {
         try {
@@ -707,13 +714,15 @@ export default function PagesManager() {
             )}
 
             {/* Inline Editor panel */}
-            {editingPage && (
-                <InlinePageEditor
-                    page={editingPage}
-                    onClose={() => setEditingPage(null)}
-                    onSaved={handleSaved}
-                />
-            )}
+            <div ref={editorAnchorRef} className="scroll-mt-24">
+                {editingPage && (
+                    <InlinePageEditor
+                        page={editingPage}
+                        onClose={() => setEditingPage(null)}
+                        onSaved={handleSaved}
+                    />
+                )}
+            </div>
 
             {/* Grouped sections */}
             {groups.map((group) => (

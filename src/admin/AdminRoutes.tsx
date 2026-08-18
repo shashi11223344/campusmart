@@ -17,11 +17,11 @@ const PagesManager = lazy(() => import('./pages/PagesManager'));
 const PageEditor = lazy(() => import('./pages/PageEditor'));
 const Categories = lazy(() => import('./pages/Categories'));
 
-const getAdminToken = () => localStorage.getItem('cm_admin_token') || localStorage.getItem('cm_token');
+const getAdminToken = () => sessionStorage.getItem('cm_admin_token') || sessionStorage.getItem('cm_token');
 
 const isLoggedIn = () => {
   const token = getAdminToken();
-  const userRaw = localStorage.getItem('cm_user');
+  const userRaw = sessionStorage.getItem('cm_user');
   if (!token) return false;
   try {
     const user = userRaw ? JSON.parse(userRaw) : null;

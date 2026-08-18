@@ -8,7 +8,7 @@ const api = axios.create({
 
 // Add auth token to all requests
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('cm_admin_token') || localStorage.getItem('cm_token');
+    const token = sessionStorage.getItem('cm_admin_token') || sessionStorage.getItem('cm_token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -20,6 +20,9 @@ api.interceptors.response.use(
     (res) => res,
     (err) => {
         if (err.response?.status === 401) {
+            sessionStorage.removeItem('cm_admin_token');
+            sessionStorage.removeItem('cm_token');
+            sessionStorage.removeItem('cm_user');
             localStorage.removeItem('cm_admin_token');
             localStorage.removeItem('cm_token');
             localStorage.removeItem('cm_user');

@@ -172,6 +172,15 @@ async function main() {
     // Pages (CMS)
     const pages = [
         { title: 'Home', slug: 'home' },
+        { title: 'About Us', slug: 'about-us' },
+        { title: 'Corporate', slug: 'corporate' },
+        { title: 'Contact Us', slug: 'contact-us' },
+        { title: 'Blog', slug: 'blog' },
+        { title: 'Shop', slug: 'shop' },
+        { title: 'Services', slug: 'services' },
+        { title: 'Solutions', slug: 'solutions' },
+        { title: 'Catalogues', slug: 'catalogues' },
+        { title: 'Classifieds', slug: 'classifieds' },
         { title: 'AI Digital Design Supply', slug: 'ai-digital-design-supply' },
         { title: 'AI Guide', slug: 'ai-guide' },
         { title: 'AI & ML', slug: 'ai-ml' },
@@ -181,7 +190,6 @@ async function main() {
         { title: 'Campus Design Execution', slug: 'campus-design-execution' },
         { title: 'Campus Design', slug: 'campus-design' },
         { title: 'Collaboration', slug: 'collaboration' },
-        { title: 'Corporate', slug: 'corporate' },
         { title: 'Digital Transformation', slug: 'digital-transformation' },
         { title: 'Furniture Design Supply', slug: 'furniture-design-supply' },
         { title: 'Furniture', slug: 'furniture' },
@@ -196,18 +204,29 @@ async function main() {
         { title: 'Partnership', slug: 'partnership' },
         { title: 'Privacy Policy', slug: 'privacy-policy' },
         { title: 'Product Catalog', slug: 'product-catalog' },
+        { title: 'Request Quote', slug: 'request-quote' },
         { title: 'Setup College', slug: 'setup-college' },
         { title: 'Sports Design Execution', slug: 'sports-design-execution' },
         { title: 'Sports Infrastructure', slug: 'sports-infra' },
         { title: 'Tech Infrastructure', slug: 'tech-infra' },
         { title: 'Terms of Use', slug: 'terms-of-use' },
         { title: 'UGC Guidelines', slug: 'ugc-guidelines' },
+        { title: 'Payment Policy', slug: 'payment-policy' },
+        { title: 'Order Rejection', slug: 'order-rejection' },
+        { title: 'Replacement & Return', slug: 'replacement-return' },
+        { title: 'My Account', slug: 'my-account' },
+        { title: 'Login', slug: 'login' },
+        { title: 'Registration', slug: 'registration' },
     ];
 
     for (const page of pages) {
         await withRetry(() => prisma.page.upsert({
             where: { slug: page.slug },
-            update: {},
+            update: {
+                title: page.title,
+                template: page.slug,
+                published: true,
+            },
             create: {
                 title: page.title,
                 slug: page.slug,
