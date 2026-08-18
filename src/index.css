@@ -58,6 +58,19 @@
     overflow-x: hidden;
   }
 
+  img {
+    max-width: 100%;
+    display: block;
+  }
+
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   h1,
   h2,
   h3,

@@ -92,8 +92,9 @@ const FeatureCards = () => {
   useLayoutEffect(() => {
     const update = () => {
       const w = window.innerWidth;
-      // 2 columns on mobile/tablet, 3 on desktop
-      setCols(w < 1024 ? 2 : 3);
+      if (w < 640) setCols(1);
+      else if (w < 1024) setCols(2);
+      else setCols(3);
     };
     update();
     window.addEventListener('resize', update);
@@ -101,21 +102,24 @@ const FeatureCards = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-2 sm:py-4 px-4 bg-[#f0f2f5]">
+    <section ref={sectionRef} className="py-2 sm:py-4 px-3 bg-[#f0f2f5] sm:px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col md:flex-row gap-6 items-start">
+        <div className="flex flex-col gap-6 md:flex-row md:items-start">
 
           {/* ─── Masonry Grid (Pure Flexbox to fix WebKit bugs) ─── */}
-          <div className="w-full md:flex-1 min-w-0 flex gap-4">
+          <div className="w-full min-w-0 flex gap-3 md:flex-1 md:gap-4">
             {Array.from({ length: cols }).map((_, colIndex) => (
-              <div key={colIndex} className="flex-1 flex flex-col gap-4">
-                {features.filter((_: any, i: number) => i % cols === colIndex).map(({ title, description, image, href, tag, color, h }: any) => (
-                  <Link
-                    key={title}
-                    to={href}
-                    className="fc-card group flex flex-col w-full rounded-2xl overflow-hidden relative shadow-lg"
-                    style={{ height: cols === 2 ? Math.min(h || 240, 240) : (h || 240) }}
-                  >
+              <div key={colIndex} className="flex flex-1 flex-col gap-3 md:gap-4">
+                {features.filter((_: any, i: number) => i % cols === colIndex).map(({ title, description, image, href, tag, color, h }: any) => {
+                  const cardHeight = window.innerWidth < 640 ? Math.min(h || 220, 220) : (window.innerWidth < 1024 ? Math.min(h || 240, 240) : (h || 240));
+
+                  return (
+                    <Link
+                      key={title}
+                      to={href}
+                      className="fc-card group flex w-full flex-col overflow-hidden rounded-2xl relative shadow-lg"
+                      style={{ height: cardHeight }}
+                    >
                     {/* Background image */}
                     <img
                       src={image}
@@ -144,24 +148,24 @@ const FeatureCards = () => {
                     </div>
 
                     {/* Bottom content — always visible and readable */}
-                    <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                    <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 md:p-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
                       <h3
-                        className="text-white font-extrabold text-[14px] md:text-lg leading-snug drop-shadow-lg mb-2 break-words"
+                        className="mb-1 text-white font-extrabold text-[12px] leading-snug drop-shadow-lg break-words sm:text-[14px] md:text-lg"
                         style={{ textShadow: '0 2px 12px rgba(0,0,0,0.8)' }}
                       >
                         {title}
                       </h3>
 
                       <div className="overflow-hidden">
-                        <p className="text-white/90 text-[11px] md:text-sm leading-snug md:leading-relaxed font-medium line-clamp-2 md:line-clamp-none">
+                        <p className="text-[10px] leading-snug font-medium text-white/90 sm:text-[11px] md:text-sm md:leading-relaxed">
                           {description}
                         </p>
-                        <div className="mt-3 flex items-center">
+                        <div className="mt-2 flex items-center sm:mt-3">
                           <span
-                            className="inline-flex items-center gap-1 text-[11px] md:text-sm font-bold tracking-widest uppercase transition-transform group-hover:translate-x-1 duration-300"
+                            className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest transition-transform group-hover:translate-x-1 duration-300 sm:text-[11px] md:text-sm"
                             style={{ color }}
                           >
-                            Explore <MoveUpRight className="w-4 h-4 ml-1" />
+                            Explore <MoveUpRight className="w-3.5 h-3.5 ml-1 sm:w-4 sm:h-4" />
                           </span>
                         </div>
                       </div>
@@ -169,17 +173,18 @@ const FeatureCards = () => {
 
                     {/* Hover border ring */}
                     <div
-                      className="absolute inset-0 rounded-2xl ring-0 group-hover:ring-2 transition-all duration-400 pointer-events-none"
+                      className="pointer-events-none absolute inset-0 rounded-2xl ring-0 transition-all duration-400 group-hover:ring-2"
                       style={{ '--tw-ring-color': color } as React.CSSProperties}
                     />
                   </Link>
-                ))}
+                  );
+                })}
               </div>
             ))}
           </div>
 
           {/* ─── Sidebar ─── */}
-          <div className="w-full md:w-[230px] flex-shrink-0 flex flex-col gap-3">
+          <div className="w-full md:w-[230px] md:flex-shrink-0 flex flex-col gap-3">
 
             <Link
               to="/request-quote"

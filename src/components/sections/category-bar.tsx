@@ -50,23 +50,22 @@ const CategoryBar = () => {
       ref={containerRef}
       className="bg-white border-b border-gray-100 pb-0 relative z-[60]"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div
           ref={iconsRef}
-          className="flex items-center justify-between gap-6 overflow-x-auto min-w-max pt-2 pb-2 [&::-webkit-scrollbar]:hidden"
+          className="flex flex-wrap items-center justify-center gap-2 pt-2 pb-2 sm:justify-between sm:gap-3 md:gap-6"
         >
           {categories.map(({ icon: Icon, label, href }) => (
-            <div key={label} className="relative group cursor-pointer">
-              <Link to={href} className="flex flex-col items-center justify-center gap-1.5 px-2 hover:text-cm-blue transition-colors">
-                <div className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-2xl transition-all duration-300 bg-gray-50 text-gray-600 group-hover:bg-blue-50 group-hover:text-cm-blue">
-                  <Icon className="w-6 h-6 md:w-7 md:h-7" />
+            <div key={label} className="relative group cursor-pointer shrink-0">
+              <Link to={href} className="flex flex-col items-center justify-center gap-1.5 px-1.5 hover:text-cm-blue transition-colors sm:px-2">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gray-50 text-gray-600 transition-all duration-300 group-hover:bg-blue-50 group-hover:text-cm-blue sm:h-12 sm:w-12 md:h-14 md:w-14">
+                  <Icon className="h-4 w-4 sm:h-5 sm:w-5 md:h-7 md:w-7" />
                 </div>
-                <span className="text-[10px] md:text-[12px] font-bold whitespace-nowrap text-gray-700 tracking-tight group-hover:text-cm-blue transition-colors uppercase">
+                <span className="text-[8px] font-bold whitespace-nowrap text-gray-700 tracking-tight uppercase transition-colors group-hover:text-cm-blue sm:text-[10px] md:text-[12px]">
                   {label}
                 </span>
 
-                {/* Active Underline Indicator */}
-                <div className="absolute -bottom-[10px] left-0 w-full h-[3px] bg-cm-yellow transition-transform duration-300 origin-center scale-x-0 group-hover:scale-x-100" />
+                <div className="absolute -bottom-[8px] left-0 h-[3px] w-full origin-center scale-x-0 bg-cm-yellow transition-transform duration-300 group-hover:scale-x-100" />
               </Link>
             </div>
           ))}

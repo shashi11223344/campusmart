@@ -72,46 +72,46 @@ const TopBar = () => {
 
   return (
     <div ref={topBarRef} className="top-bar">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex flex-wrap items-center justify-between gap-2 py-1">
           {/* Left - Contact Info */}
-          <div ref={leftContentRef} className="flex items-center gap-4 text-sm">
+          <div ref={leftContentRef} className="flex min-w-0 items-center gap-2 text-[10px] sm:gap-4 sm:text-sm">
             <a
               href="mailto:info@campusmart.in"
-              className="flex items-center gap-2 hover:text-cm-yellow transition-colors duration-200"
+              className="flex items-center gap-1.5 text-white/90 hover:text-cm-yellow transition-colors duration-200 sm:gap-2"
             >
-              <Mail className="w-4 h-4" />
+              <Mail className="w-3.5 h-3.5 shrink-0 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">info@campusmart.in</span>
             </a>
             <span className="hidden md:inline text-blue-300">|</span>
             <a
               href="tel:+919966109191"
-              className="flex items-center gap-2 hover:text-cm-yellow transition-colors duration-200"
+              className="flex items-center gap-1.5 text-white/90 hover:text-cm-yellow transition-colors duration-200 sm:gap-2"
             >
-              <Phone className="w-4 h-4" />
+              <Phone className="w-3.5 h-3.5 shrink-0 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">+91 9966109191</span>
             </a>
           </div>
 
           {/* Right - Social Icons & Auth */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <div ref={socialIconsRef} className="hidden md:flex items-center gap-2">
               {socialIcons.map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-cm-yellow hover:text-cm-blue-dark hover:rotate-12 transition-all duration-200"
+                  className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center hover:bg-cm-yellow hover:text-cm-blue-dark hover:rotate-12 transition-all duration-200 sm:w-8 sm:h-8"
                 >
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </a>
               ))}
             </div>
 
-            <div ref={authLinksRef} className="flex items-center gap-4 text-sm font-semibold">
+            <div ref={authLinksRef} className="flex items-center gap-2 text-[10px] font-semibold sm:gap-4 sm:text-sm">
               {isLoggedIn ? (
                 <>
-                  <span className="text-slate-100 hidden sm:inline">Hi, {userName}</span>
+                  <span className="hidden text-slate-100 sm:inline">Hi, {userName}</span>
                   <Link
                     to="/my-account"
                     className="hover:text-cm-yellow transition-colors duration-200 relative group"
@@ -136,7 +136,7 @@ const TopBar = () => {
                     REGISTRATION
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-cm-yellow transition-all duration-300 group-hover:w-full" />
                   </Link>
-                  <span className="text-blue-300">|</span>
+                  <span className="hidden text-blue-300 sm:inline">|</span>
                   <Link
                     to="/login"
                     className="hover:text-cm-yellow transition-colors duration-200 relative group"

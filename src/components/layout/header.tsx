@@ -109,13 +109,13 @@ const MainHeader = () => {
       ref={headerRef}
       className={`main-header relative z-[70] ${isScrolled ? 'scrolled' : ''}`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`header-inner flex items-center justify-between ${isScrolled ? 'h-16' : 'h-20'}`}>
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className={`header-inner flex items-center justify-between gap-2 sm:gap-4 ${isScrolled ? 'h-16' : 'h-16 sm:h-20'}`}>
           {/* Logo */}
-          <div ref={logoRef} className="flex-shrink-0">
+          <div ref={logoRef} className="flex min-w-0 flex-shrink-0">
             <Link to="/" className="flex items-center">
-              <div className="h-12 md:h-[60px] flex items-center">
-                 <img src="/logo.png" alt="CampusMart" className="h-full w-auto object-contain" />
+              <div className="h-10 sm:h-12 md:h-[60px] flex items-center">
+                 <img src="/logo.png" alt="CampusMart" className="h-full w-auto object-contain max-w-[140px] sm:max-w-none" />
               </div>
             </Link>
           </div>
@@ -132,7 +132,6 @@ const MainHeader = () => {
                       onMouseLeave={() => setDropdownOpen(null)}
                     >
                       {item.href ? (
-                        // Regular link with dropdown
                         <Link
                           to={item.href}
                           className={`nav-link flex items-center gap-1 ${isActive(item.href) ? 'bg-cm-blue text-white rounded-full' : ''}`}
@@ -141,7 +140,6 @@ const MainHeader = () => {
                           <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen === item.label ? 'rotate-180' : ''}`} />
                         </Link>
                       ) : (
-                        // Dropdown-only button (no navigation)
                         <button
                           className="nav-link flex items-center gap-1 cursor-pointer"
                           onClick={() => setDropdownOpen(dropdownOpen === item.label ? null : item.label)}
@@ -181,40 +179,40 @@ const MainHeader = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2 rounded-lg hover:bg-black/10 transition-colors"
+            className="lg:hidden ml-auto flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/10 bg-white/20 text-black transition-colors hover:bg-black/10"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             ) : (
-              <Menu className="w-6 h-6" />
+              <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
             )}
           </button>
         </div>
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <nav className="lg:hidden py-4 border-t border-black/10">
-            <ul className="flex flex-col gap-2">
+          <nav className="lg:hidden border-t border-black/10 py-3">
+            <ul className="flex flex-col gap-1.5">
               {navItems.map((item) => (
                 <li key={item.label}>
                   {item.hasDropdown ? (
                     <div>
                       <button
-                        className={`w-full text-left px-4 py-2 text-sm font-semibold uppercase hover:bg-cm-blue hover:text-white rounded-lg transition-colors flex items-center justify-between ${item.href && isActive(item.href) ? 'bg-cm-blue text-white' : ''}`}
+                        className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-semibold uppercase transition-colors ${item.href && isActive(item.href) ? 'bg-cm-blue text-white' : 'text-gray-700 hover:bg-cm-blue hover:text-white'}`}
                         onClick={() => setDropdownOpen(dropdownOpen === item.label ? null : item.label)}
                       >
                         {item.label}
-                        <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen === item.label ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`h-4 w-4 transition-transform ${dropdownOpen === item.label ? 'rotate-180' : ''}`} />
                       </button>
                       {dropdownOpen === item.label && item.dropdownItems && (
-                        <div className="pl-4 mt-1 space-y-1">
+                        <div className="mt-1 space-y-1 pl-3">
                           {item.dropdownItems.map((dropdownItem) => (
                             <Link
                               key={dropdownItem.label}
                               to={dropdownItem.href}
-                              className="block px-4 py-2 text-sm text-gray-600 hover:text-cm-blue transition-colors"
+                              className="block rounded-md px-3 py-2 text-xs text-gray-600 transition-colors hover:text-cm-blue"
                               onClick={() => setIsMobileMenuOpen(false)}
                             >
                               {dropdownItem.label}
@@ -226,7 +224,7 @@ const MainHeader = () => {
                   ) : item.href ? (
                     <Link
                       to={item.href}
-                      className={`block px-4 py-2 text-sm font-semibold uppercase hover:bg-cm-blue hover:text-white rounded-lg transition-colors ${isActive(item.href) ? 'bg-cm-blue text-white' : ''}`}
+                      className={`block rounded-lg px-3 py-2 text-xs font-semibold uppercase transition-colors ${isActive(item.href) ? 'bg-cm-blue text-white' : 'text-gray-700 hover:bg-cm-blue hover:text-white'}`}
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {item.label}
