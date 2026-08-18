@@ -87,12 +87,6 @@ const HeroBanner = () => {
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3">
                 <a 
-                  href="/request-quote" 
-                  className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 bg-yellow-400 text-blue-900 font-black rounded-md hover:bg-yellow-300 transition-all duration-300 text-sm sm:text-base"
-                >
-                  Explore Solutions →
-                </a>
-                <a 
                   href="/contact-us" 
                   className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 border border-white/50 text-white font-black rounded-md hover:bg-white/10 transition-all duration-300 text-sm sm:text-base"
                 >
