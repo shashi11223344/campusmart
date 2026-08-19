@@ -26,12 +26,12 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, '../../uploads');
-const cataloguesDir = path.join(uploadsDir, 'catalogues');
-const imagesDir = path.join(uploadsDir, 'images');
-[uploadsDir, cataloguesDir, imagesDir].forEach((dir) => {
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-});
+// const uploadsDir = path.join(__dirname, '../../uploads');
+// const cataloguesDir = path.join(uploadsDir, 'catalogues');
+// const imagesDir = path.join(uploadsDir, 'images');
+// [uploadsDir, cataloguesDir, imagesDir].forEach((dir) => {
+//     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+// });
 
 // Security middleware
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
@@ -65,7 +65,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Static files (uploaded images/PDFs)
-app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+// app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 
 // Health check
 app.get('/health', (_req, res) => {
