@@ -75,7 +75,7 @@ const Labs = () => {
       </section>
 
       {/* Lab Modules Grid Layout */}
-      <section className="py-12 md:py-16">
+      <section className="py-2 md:py-4">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl md:text-3xl font-bold text-cm-blue-dark tracking-tighter">

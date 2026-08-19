@@ -139,6 +139,7 @@ function App() {
             {/* Core Pages */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Layout><Login /></Layout>} />
+            <Route path="/register" element={<Layout><Registration /></Layout>} />
             <Route path="/registration" element={<Layout><Registration /></Layout>} />
             <Route path="/product/:slug" element={<Layout><ProductDetail /></Layout>} />
             <Route path="/admin/*" element={<AdminRoutes />} />

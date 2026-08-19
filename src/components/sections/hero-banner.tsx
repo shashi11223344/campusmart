@@ -52,7 +52,7 @@ const HeroBanner = () => {
       ref={containerRef}
       className="relative overflow-hidden w-full"
       style={{
-        minHeight: '480px',
+        minHeight: '280px',
         backgroundImage: `linear-gradient(90deg,rgba(2,22,50,.96) 0%,rgba(2,22,50,.83) 42%,rgba(2,22,50,.24) 78%), url('${heroData.image}')`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -65,14 +65,14 @@ const HeroBanner = () => {
             <div className="max-w-2xl text-white">
               <div 
                 ref={subtitleRef}
-                className="text-xs sm:text-sm md:text-base font-black uppercase tracking-widest text-blue-300 mb-4"
+                className="text-[10px] sm:text-xs md:text-sm font-black uppercase tracking-widest text-blue-300 mb-2"
               >
                 Future-ready campus infrastructure
               </div>
               
               <h1
                 ref={titleRef}
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight mb-6"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-tight mb-2"
                 style={{ letterSpacing: '-1.5px' }}
               >
                 Design. Build.<br />
@@ -80,7 +80,7 @@ const HeroBanner = () => {
                 <span style={{ color: '#8fc7ff' }}>Future-Ready Campuses.</span>
               </h1>
               
-              <p className="text-lg sm:text-xl text-blue-100 mb-8 max-w-3xl leading-relaxed">
+              <p className="text-sm sm:text-base text-blue-100 mb-3 max-w-3xl leading-snug">
                 {heroData.subtitle || 'End-to-end infrastructure and technology solutions that transform universities into intelligent, sustainable and future-ready campuses.'}
               </p>
 
@@ -88,7 +88,7 @@ const HeroBanner = () => {
               <div className="flex flex-wrap gap-3">
                 <a 
                   href="/contact-us" 
-                  className="inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-4 border border-white/50 text-white font-black rounded-md hover:bg-white/10 transition-all duration-300 text-sm sm:text-base"
+                  className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2 sm:py-2.5 border border-white/50 text-white font-black rounded-md hover:bg-white/10 transition-all duration-300 text-xs sm:text-sm"
                 >
                   Schedule Campus Audit →
                 </a>
