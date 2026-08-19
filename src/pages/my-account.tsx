@@ -15,12 +15,40 @@ interface WishlistItem {
   };
 }
 
+interface Address {
+  id: number;
+  type: string;
+  line1: string;
+  line2?: string | null;
+  city: string;
+  state: string;
+  pincode: string;
+}
+
+type AddressForm = Omit<Address, 'id'>;
+
+const emptyAddress: AddressForm = {
+  type: 'Home',
+  line1: '',
+  line2: '',
+  city: '',
+  state: '',
+  pincode: '',
+};
+
 const MyAccount = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile');
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addressesLoading, setAddressesLoading] = useState(false);
+  const [addressForm, setAddressForm] = useState<AddressForm>(emptyAddress);
+  const [editingAddressId, setEditingAddressId] = useState<number | null>(null);
+  const [addressFormOpen, setAddressFormOpen] = useState(false);
+  const [addressSaving, setAddressSaving] = useState(false);
+  const [addressError, setAddressError] = useState('');
   const storedUser = localStorage.getItem('cm_user');
   const currentUser = storedUser ? JSON.parse(storedUser) : null;
   const isLoggedIn = !!localStorage.getItem('cm_token') && !!currentUser;
@@ -39,6 +67,15 @@ const MyAccount = () => {
       .catch(() => setWishlist([]))
       .finally(() => setWishlistLoading(false));
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (!isLoggedIn || activeTab !== 'addresses') return;
+    setAddressesLoading(true);
+    api.get('/addresses')
+      .then(({ data }) => setAddresses(data))
+      .catch((err: any) => setAddressError(err.response?.data?.error || 'Failed to load addresses.'))
+      .finally(() => setAddressesLoading(false));
+  }, [activeTab, isLoggedIn]);
 
   useEffect(() => {
     const tab = searchParams.get('tab');
@@ -83,10 +120,56 @@ const MyAccount = () => {
     { id: 'ORD003', date: '2023-12-28', total: 28000, status: 'Delivered', items: 2 },
   ];
 
-  const addresses = [
-    { id: 1, type: 'Home', address: '123, Main Street, Bangalore, Karnataka - 560001', default: true },
-    { id: 2, type: 'Office', address: '456, Business Park, Bangalore, Karnataka - 560002', default: false },
-  ];
+  const openNewAddressForm = () => {
+    setEditingAddressId(null);
+    setAddressForm(emptyAddress);
+    setAddressError('');
+    setAddressFormOpen(true);
+  };
+
+  const openEditAddressForm = (address: Address) => {
+    setEditingAddressId(address.id);
+    setAddressForm({
+      type: address.type,
+      line1: address.line1,
+      line2: address.line2 || '',
+      city: address.city,
+      state: address.state,
+      pincode: address.pincode,
+    });
+    setAddressError('');
+    setAddressFormOpen(true);
+  };
+
+  const saveAddress = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setAddressSaving(true);
+    setAddressError('');
+    try {
+      const request = editingAddressId
+        ? api.put(`/addresses/${editingAddressId}`, { ...addressForm, isDefault: false })
+        : api.post('/addresses', { ...addressForm, isDefault: false });
+      const { data } = await request;
+      setAddresses((current) => editingAddressId
+        ? current.map((address) => address.id === editingAddressId ? data : address)
+        : [...current, data]);
+      setAddressFormOpen(false);
+    } catch (err: any) {
+      setAddressError(err.response?.data?.error || 'Failed to save address.');
+    } finally {
+      setAddressSaving(false);
+    }
+  };
+
+  const deleteAddress = async (id: number) => {
+    if (!window.confirm('Delete this address?')) return;
+    try {
+      await api.delete(`/addresses/${id}`);
+      setAddresses((current) => current.filter((address) => address.id !== id));
+    } catch (err: any) {
+      setAddressError(err.response?.data?.error || 'Failed to delete address.');
+    }
+  };
 
   if (!isLoggedIn) {
     return (
@@ -259,27 +342,45 @@ const MyAccount = () => {
               <div className="bg-white rounded-xl p-8 shadow-card">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-cm-blue-dark">Saved Addresses</h2>
-                  <button className="btn-primary text-sm">Add New Address</button>
+                  <button onClick={openNewAddressForm} className="btn-primary text-sm">Add New Address</button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {addresses.map((address) => (
-                    <div key={address.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-cm-blue-dark">{address.type}</span>
-                        {address.default && (
-                          <span className="text-xs bg-cm-blue text-white px-2 py-1 rounded">
-                            Default
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-gray-600 text-sm">{address.address}</p>
-                      <div className="mt-4 flex gap-3">
-                        <button className="text-sm text-cm-blue hover:underline">Edit</button>
-                        <button className="text-sm text-red-600 hover:underline">Delete</button>
-                      </div>
+                {addressError && <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">{addressError}</div>}
+                {addressFormOpen && (
+                  <form onSubmit={saveAddress} className="mb-6 border rounded-lg p-4 space-y-4 bg-gray-50">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <input required value={addressForm.type} onChange={(e) => setAddressForm({ ...addressForm, type: e.target.value })} className="form-input" placeholder="Label (Home, Office...)" />
+                      <input required value={addressForm.pincode} onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value })} className="form-input" placeholder="Pincode" />
                     </div>
-                  ))}
-                </div>
+                    <input required value={addressForm.line1} onChange={(e) => setAddressForm({ ...addressForm, line1: e.target.value })} className="form-input" placeholder="Address line 1" />
+                    <input value={addressForm.line2 || ''} onChange={(e) => setAddressForm({ ...addressForm, line2: e.target.value })} className="form-input" placeholder="Address line 2 (optional)" />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <input required value={addressForm.city} onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })} className="form-input" placeholder="City" />
+                      <input required value={addressForm.state} onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })} className="form-input" placeholder="State" />
+                    </div>
+                    <div className="flex gap-3">
+                      <button type="submit" disabled={addressSaving} className="btn-primary disabled:opacity-60">{addressSaving ? 'Saving...' : editingAddressId ? 'Save Changes' : 'Add Address'}</button>
+                      <button type="button" onClick={() => setAddressFormOpen(false)} className="px-4 py-2 text-sm text-gray-600">Cancel</button>
+                    </div>
+                  </form>
+                )}
+                {addressesLoading ? <p className="text-sm text-gray-500">Loading addresses...</p> : addresses.length === 0 ? (
+                  <p className="text-sm text-gray-500">No saved addresses. Add an address to get started.</p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {addresses.map((address) => (
+                      <div key={address.id} className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-semibold text-cm-blue-dark">{address.type}</span>
+                        </div>
+                        <p className="text-gray-600 text-sm">{[address.line1, address.line2, address.city, address.state, address.pincode].filter(Boolean).join(', ')}</p>
+                        <div className="mt-4 flex gap-3">
+                          <button onClick={() => openEditAddressForm(address)} className="text-sm text-cm-blue hover:underline">Edit</button>
+                          <button onClick={() => deleteAddress(address.id)} className="text-sm text-red-600 hover:underline">Delete</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

@@ -24,7 +24,13 @@ const ContactUs = () => {
     setSubmitting(true);
     setSubmitError('');
     try {
-      await api.post('/contact/enquiry', formData);
+      await api.post('/contact', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: `College / University: ${formData.collegeName}\nAuthorised Person: ${formData.authorisedPerson}\nAddress: ${formData.address}\nCourses Offered: ${formData.coursesOffered}\n\n${formData.message}`,
+      });
       setSubmitted(true);
       setFormData({ 
         name: '', 

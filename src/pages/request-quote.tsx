@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Send, CheckCircle } from 'lucide-react';
+import api from '@/api/client';
 
 const RequestQuote = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,9 +19,25 @@ const RequestQuote = () => {
     timeline: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      await api.post('/contact/quote', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        institution: formData.collegeName,
+        items: `Authorised Person: ${formData.authorisedPerson}\nPincode: ${formData.pincode}\nBudget: ${formData.budget || 'Not specified'}\nTimeline: ${formData.timeline || 'Not specified'}`,
+        message: `Address: ${formData.address}\nRequirements: ${formData.requirement}`,
+      });
+      setSubmitted(true);
+    } catch (err: any) {
+      setSubmitError(err.response?.data?.error || 'Failed to submit quote request. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -41,6 +60,11 @@ const RequestQuote = () => {
           <p className="text-gray-600 text-center mb-2">Tell us about your requirements and we'll get back to you.</p>
           
           <form onSubmit={handleSubmit} className="space-y-6">
+            {submitError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600">
+                {submitError}
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="form-label">College / University Name *</label>
@@ -102,9 +126,9 @@ const RequestQuote = () => {
                 </select>
               </div>
             </div>
-            <button type="submit" className="btn-primary w-full flex items-center justify-center gap-2">
+            <button type="submit" disabled={submitting} className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60">
               <Send className="w-5 h-5" />
-              Submit Request
+              {submitting ? 'Submitting...' : 'Submit Request'}
             </button>
           </form>
         </div>
