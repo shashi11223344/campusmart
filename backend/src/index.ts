@@ -89,10 +89,10 @@ app.use('/api/pages', pagesRoutes);
 // Error handler must be last
 app.use(errorHandler);
 
-// if (!process.env.VERCEL) {
-//   app.listen(Number(PORT), '0.0.0.0', () => {
-//     console.log(`CampusMart Backend running on port ${PORT}`);
-//   });
-// }
+if (!process.env.VERCEL) {
+  app.listen(Number(PORT), '0.0.0.0', () => {
+    console.log(`CampusMart Backend running on port ${PORT}`);
+  });
+}
 
-// export default app;
+export default app;
