@@ -1,10 +1,14 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { Link } from 'react-router-dom';
-import { Building2, ArrowRight, DollarSign, Handshake } from 'lucide-react';
+import { Building2, ArrowRight, DollarSign, Handshake, type LucideIcon } from 'lucide-react';
+import { usePageData } from '@/hooks/usePageData';
+
+interface Listing { title: string; description?: string; desc?: string; href?: string; link: string; icon: LucideIcon; }
 
 const Classifieds = () => {
   const heroRef = useRef<HTMLDivElement>(null);
+  const { data } = usePageData('classifieds');
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(heroRef.current, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' });
@@ -12,20 +16,26 @@ const Classifieds = () => {
     return () => ctx.revert();
   }, []);
 
-  const listings = [
+  const defaultListings: Listing[] = [
     { title: 'Colleges for Sale', icon: Building2, desc: 'Browse educational institutions available for acquisition', link: '#' },
     { title: 'Education Funding', icon: DollarSign, desc: 'Explore funding options for your institution', link: '#' },
     { title: 'Partnership Opportunities', icon: Handshake, desc: 'Find partnership opportunities with running colleges', link: '/partnership' },
   ];
+  const listings: Listing[] = (data.cards?.length ? data.cards : defaultListings).map((item: any, index: number) => ({
+    ...item,
+    icon: [Building2, DollarSign, Handshake][index % 3],
+    desc: item.description ?? item.desc,
+    link: item.href ?? item.link ?? '#',
+  }));
 
   return (
     <main className="min-h-screen bg-white">
       <section className="py-4 sm:py-6 md:py-8 px-4 sm:px-6 lg:px-8">
         <div ref={heroRef} className="bg-gradient-to-r from-cm-blue to-blue-700 rounded-2xl py-8 sm:py-10 md:py-12 px-6 sm:px-8 lg:px-12 max-w-5xl mx-auto">
           <div className="text-center">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">Classifieds</h1>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">{data.heroTitle ?? 'Classifieds'}</h1>
             <p className="text-lg sm:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-              Explore opportunities in the education sector. Colleges for sale, funding options, and partnerships.
+              {data.heroSubtitle ?? 'Explore opportunities in the education sector. Colleges for sale, funding options, and partnerships.'}
             </p>
           </div>
         </div>

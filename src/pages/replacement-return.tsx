@@ -11,6 +11,13 @@ const ReplacementReturn = () => {
           <h1 className="text-3xl font-bold text-cm-blue-dark mb-6">{heroTitle}</h1>
 
           <div className="space-y-6 text-gray-700">
+            {data.sections?.length ? data.sections.map((section: any) => (
+              <section key={section.heading}>
+                <h2 className="text-xl font-bold text-cm-blue-dark mb-3">{section.heading}</h2>
+                <p className="whitespace-pre-line">{section.body}</p>
+                {section.bullets?.length ? <ul className="list-disc pl-6 mt-2 space-y-1">{section.bullets.map((bullet: string) => <li key={bullet}>{bullet}</li>)}</ul> : null}
+              </section>
+            )) : <>
             <section>
               <h2 className="text-xl font-bold text-cm-blue-dark mb-3">1. Overview</h2>
               <p>At Campus Mart, we strive to ensure that every product delivered meets our high standards of quality. However, if you receive a product that is damaged or defective, we are committed to resolving the issue through our replacement policy.</p>
@@ -40,8 +47,9 @@ const ReplacementReturn = () => {
               <h2 className="text-xl font-bold text-cm-blue-dark mb-3">5. Non-Returnable Items</h2>
               <p>Custom-made furniture, specially ordered equipment, and digital software solutions are generally non-returnable unless they possess a manufacturing defect.</p>
             </section>
+            </>}
 
-            <p className="text-sm text-gray-500 mt-8">Last updated: March 2024</p>
+            <p className="text-sm text-gray-500 mt-8">Last updated: {data.lastUpdated ?? 'March 2024'}</p>
           </div>
         </div>
       </div>

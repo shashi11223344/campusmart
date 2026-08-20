@@ -137,24 +137,24 @@ const Catalogues = () => {
   return (
     <main className="min-h-screen">
       {/* Hero Section */}
-      <section ref={heroRef} className="bg-cm-blue mx-3 sm:mx-6 md:mx-10 lg:mx-16 xl:mx-32 rounded-[2rem] py-6 mt-4">
-        <div className="w-full mx-auto px-6 sm:px-8 md:px-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+      <section ref={heroRef} className="bg-cm-blue mx-3 sm:mx-6 md:mx-10 lg:mx-16 xl:mx-32 rounded-[2rem] py-4 sm:py-6 mt-4">
+        <div className="w-full mx-auto px-4 sm:px-8 md:px-12 text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3 sm:mb-6">
             {heroTitle}
           </h1>
-          <p className="text-xl text-white/80 max-w-3xl mx-auto">
+          <p className="text-base sm:text-xl text-white/80 max-w-3xl mx-auto leading-snug">
             {heroSubtitle}
           </p>
         </div>
       </section>
 
       {/* Catalogues Grid */}
-      <section className="py-12 md:py-16 px-4 sm:px-6 md:px-10 lg:px-16 xl:px-32">
+      <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-10 lg:px-16 xl:px-32">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-cm-blue-dark mb-8 md:mb-12 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-cm-blue-dark mb-6 md:mb-12 text-center">
             Download Our Catalogues
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
             {catalogues.map((catalogue: any) => {
               const hasDownload = Boolean(catalogue.downloadLink);
 
@@ -163,14 +163,14 @@ const Catalogues = () => {
                   key={catalogue.title}
                   className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 hover:border-cm-blue/20"
                 >
-                  <div className="h-56 overflow-hidden bg-gray-100">
+                  <div className="h-44 sm:h-56 overflow-hidden bg-gray-100">
                     <img
                       src={catalogue.image}
                       alt={catalogue.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
-                  <div className="p-6 md:p-8">
+                  <div className="p-4 sm:p-6 md:p-8">
                     <div className="flex items-center gap-2 mb-4">
                       <FileText className="w-5 h-5 text-cm-blue" />
                       <span className="text-xs font-semibold text-cm-blue uppercase tracking-wider">{catalogue.size || 'PDF'}</span>

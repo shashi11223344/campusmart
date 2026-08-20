@@ -45,11 +45,11 @@ export const pageDefaults: Record<string, any> = {
   heroSubtitle: 'AI-powered learning stations for modern education. Interactive, engaging, and designed for the future of learning.',
   heroImage: 'https://images.unsplash.com/photo-1531746790731-6c087fecd65a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
   section1Title: 'Features',
-  features: [
-    'Interactive AI Tutors',
-    'Personalized Learning Paths',
-    'Real-time Analytics',
-    'Multi-language Support'
+  cards: [
+    { title: 'Interactive AI Tutors', description: 'Personalized learning experiences powered by AI', image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
+    { title: 'Personalized Learning Paths', description: 'Adaptive curriculum tailored to each student', image: 'https://images.unsplash.com/photo-1516321318423-f06a051b3e14?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
+    { title: 'Real-time Analytics', description: 'Track progress with comprehensive data insights', image: 'https://images.unsplash.com/photo-1551427260-7cddeaf76ae8?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' },
+    { title: 'Multi-language Support', description: 'Learning in preferred languages with AI assistance', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80' }
   ]
 },
   'assessment-system': {
@@ -167,6 +167,58 @@ export const pageDefaults: Record<string, any> = {
       image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
     },
   ]
+},
+  'classifieds': {
+  heroTitle: 'Classifieds',
+  heroSubtitle: 'Explore opportunities in the education sector. Colleges for sale, funding options, and partnerships.',
+  cards: [
+    { title: 'Colleges for Sale', description: 'Browse educational institutions available for acquisition', href: '#' },
+    { title: 'Education Funding', description: 'Explore funding options for your institution', href: '#' },
+    { title: 'Partnership Opportunities', description: 'Find partnership opportunities with running colleges', href: '/partnership' }
+  ]
+},
+  'contact-us': {
+  heroTitle: 'Contact Us',
+  heroSubtitle: "Have a question or need assistance? We're here to help. Reach out to us through any of the channels below.",
+  cards: [
+    { title: 'Phone', description: '+91 9966109191\n+91 9866091111' },
+    { title: 'Email', description: 'info@campusmart.in\nsupport@campusmart.in' },
+    { title: 'Working Hours', description: 'Monday - Friday: 9:00 AM - 6:00 PM\nSaturday: 10:00 AM - 4:00 PM' }
+  ]
+},
+  'payment-policy': {
+  heroTitle: 'Payment Policy',
+  sections: [
+    { heading: '1. Payment Methods', body: 'We accept various payment methods including Credit/Debit Cards, Net Banking, and UPI through our secure payment gateway partners.' },
+    { heading: '2. Currency', body: 'All transactions are processed in Indian Rupees (INR) unless otherwise explicitly specified in the order quotation.' },
+    { heading: '3. Billing and Taxes', body: 'GST will be applied as per the prevailing government regulations. A detailed tax invoice will be provided for all purchases.' },
+    { heading: '4. Security', body: 'We do not store your credit card or sensitive financial information on our servers. All payments are handled by certified third-party payment processors.' }
+  ],
+  lastUpdated: 'March 2024'
+},
+  'privacy-policy': {
+  heroTitle: 'Privacy Policy',
+  sections: [
+    { heading: '1. Introduction', body: 'Campus Mart ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.' },
+    { heading: '2. Information We Collect', body: 'We may collect personal information that you voluntarily provide to us, including:', bullets: ['Name and contact information', 'Email address', 'Phone number', 'Institution details', 'Payment information'] },
+    { heading: '3. How We Use Your Information', body: 'We use the information we collect to:', bullets: ['Provide and maintain our services', 'Process your orders and requests', 'Communicate with you about our services', 'Improve our website and services', 'Comply with legal obligations'] },
+    { heading: '4. Information Sharing', body: 'We do not sell or rent your personal information to third parties. We may share your information with:', bullets: ['Service providers who assist us in operating our business', 'Legal authorities when required by law', 'Business partners with your consent'] },
+    { heading: '5. Data Security', body: 'We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.' },
+    { heading: '6. Your Rights', body: 'You have the right to:', bullets: ['Access your personal information', 'Correct inaccurate information', 'Request deletion of your information', 'Opt-out of marketing communications'] },
+    { heading: '7. Contact Us', body: 'If you have any questions about this Privacy Policy, please contact us at:\nEmail: privacy@campusmart.in\nPhone: +91 9966109191' }
+  ],
+  lastUpdated: 'January 2025'
+},
+  'replacement-return': {
+  heroTitle: 'Replacement & Return Policy',
+  sections: [
+    { heading: '1. Overview', body: 'At Campus Mart, we strive to ensure that every product delivered meets our high standards of quality. However, if you receive a product that is damaged or defective, we are committed to resolving the issue through our replacement policy.' },
+    { heading: '2. Conditions for Replacement', body: 'Replacements will only be considered under the following circumstances:', bullets: ['Products received in a physically damaged condition.', 'Products that have missing parts or accessories.', 'Products that are different from what was ordered.'] },
+    { heading: '3. Reporting an Issue', body: 'Any damage or discrepancy must be reported within 48 hours of delivery. Please provide photographic evidence of the damage and your order details to our support team at info@campusmart.in.' },
+    { heading: '4. Return Process', body: 'Once your request is approved, we will arrange for the collection of the damaged item. Please ensure the product is in its original packaging with all manuals and accessories included.' },
+    { heading: '5. Non-Returnable Items', body: 'Custom-made furniture, specially ordered equipment, and digital software solutions are generally non-returnable unless they possess a manufacturing defect.' }
+  ],
+  lastUpdated: 'March 2024'
 },
   'collaboration': {
   heroTitle: 'Collaboration Spaces',
@@ -495,6 +547,33 @@ export const pageDefaults: Record<string, any> = {
     'https://images.unsplash.com/photo-1461896836934-voices?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
     'https://images.unsplash.com/photo-1518611012118-696072aa579a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80'
   ]
+},
+  'sports-design-execution': {
+  heroTitle: 'Sports Design & Execution',
+  heroSubtitle: 'Complete sports facility design and construction services — from concept to final handover.',
+  heroImage: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
+  section1Title: 'Our Approach',
+  cards: [
+    { title: 'Sport-Specific Design', description: 'Custom designs meeting international sports standards' },
+    { title: 'Material Sourcing', description: 'High-quality certified sports surface materials' },
+    { title: 'Construction', description: 'Expert construction with minimal disruption' },
+    { title: 'Certification', description: 'Sports facilities certified to national/international standards' }
+  ]
+},
+  'terms-of-use': {
+  heroTitle: 'Terms of Use',
+  sections: [
+    { heading: '1. Acceptance of Terms', body: 'By accessing and using the Campus Mart website and services, you agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use our services.' },
+    { heading: '2. Use of Services', body: 'You agree to use our services only for lawful purposes and in accordance with these Terms. You agree not to:', bullets: ['Use our services in any way that violates applicable laws', 'Attempt to gain unauthorized access to our systems', 'Interfere with or disrupt our services', 'Transmit any harmful or malicious content'] },
+    { heading: '3. Account Registration', body: 'To access certain features, you may need to create an account. You are responsible for:', bullets: ['Providing accurate and complete information', 'Maintaining the confidentiality of your account credentials', 'All activities that occur under your account'] },
+    { heading: '4. Intellectual Property', body: 'All content on our website, including text, graphics, logos, and images, is the property of Campus Mart or its licensors and is protected by copyright and other intellectual property laws.' },
+    { heading: '5. Product Information', body: 'We strive to provide accurate product information, but we do not warrant that product descriptions, pricing, or other content is accurate, complete, or current. Prices and availability are subject to change without notice.' },
+    { heading: '6. Limitation of Liability', body: 'Campus Mart shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to your use of our services.' },
+    { heading: '7. Governing Law', body: 'These Terms shall be governed by and construed in accordance with the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts in Bangalore.' },
+    { heading: '8. Changes to Terms', body: 'We reserve the right to modify these Terms at any time. We will notify you of any material changes by posting the updated Terms on our website.' },
+    { heading: '9. Contact Information', body: 'If you have any questions about these Terms, please contact us:\nEmail: legal@campusmart.in\nPhone: +91 9966109191' }
+  ],
+  lastUpdated: 'January 2025'
 },
   'tech-infra': {
   heroTitle: 'Technology Infrastructure',

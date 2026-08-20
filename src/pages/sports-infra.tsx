@@ -37,11 +37,11 @@ const DEFAULTS = {
   ]
 };
 
-const SportsInfra = () => {
+const SportsInfra = ({ slug = 'sports-infra' }: { slug?: string }) => {
   const heroRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
   const quoteRef = useRef<HTMLDivElement>(null);
-  const { data } = usePageData('sports-infra');
+  const { data } = usePageData(slug);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);

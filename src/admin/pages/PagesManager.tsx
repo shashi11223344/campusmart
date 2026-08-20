@@ -4,7 +4,8 @@ import api from '../api/client';
 import { pageDefaults } from '../pageDefaults';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
-interface CardItem { title: string; description: string; image?: string; }
+interface CardItem { title: string; description: string; image?: string; href?: string; }
+interface SectionItem { heading: string; body: string; bullets?: string[]; }
 interface PageData {
     heroTitle?: string;
     heroSubtitle?: string;
@@ -15,6 +16,8 @@ interface PageData {
     ctaSubtitle?: string;
     cards?: CardItem[];
     features?: string[];
+    sections?: SectionItem[];
+    lastUpdated?: string;
 }
 interface Page {
     id: number;
@@ -119,6 +122,12 @@ function InlinePageEditor({ page, onClose, onSaved }: {
     };
     const addCard = () => set('cards', [...(data.cards ?? []), { title: 'New Card', description: '' }]);
     const removeCard = (i: number) => set('cards', (data.cards ?? []).filter((_: any, idx: number) => idx !== i));
+
+    const setSection = (i: number, field: string, value: any) => {
+        const sections = [...(data.sections ?? [])]; sections[i] = { ...sections[i], [field]: value }; set('sections', sections);
+    };
+    const addSection = () => set('sections', [...(data.sections ?? []), { heading: 'New Section', body: '', bullets: [] }]);
+    const removeSection = (i: number) => set('sections', (data.sections ?? []).filter((_: any, idx: number) => idx !== i));
 
     const setFeature = (i: number, v: string) => {
         const f = [...(data.features ?? [])]; f[i] = v; set('features', f);
@@ -351,12 +360,52 @@ function InlinePageEditor({ page, onClose, onSaved }: {
                                                 <Field label="Card Title" value={card.title ?? ''} onChange={v => setCard(i, 'title', v)} />
                                                 <Field label="Card Description" value={card.description ?? ''} onChange={v => setCard(i, 'description', v)} multiline />
                                                 <Field label="Image URL (Optional)" value={card.image ?? ''} onChange={v => setCard(i, 'image', v)} />
+                                                {('href' in (effectiveDefaults.cards?.[i] || {})) && (
+                                                    <Field label="Card Link" value={card.href ?? ''} onChange={v => setCard(i, 'href', v)} />
+                                                )}
                                                 {('downloadLink' in (effectiveDefaults.cards?.[i] || {})) && (
                                                     <Field label="Download URL" value={card.downloadLink ?? ''} onChange={v => setCard(i, 'downloadLink', v)} />
                                                 )}
                                                 {('size' in (effectiveDefaults.cards?.[i] || {})) && (
                                                     <Field label="File Size (e.g. 10 MB)" value={card.size ?? ''} onChange={v => setCard(i, 'size', v)} />
                                                 )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+
+                        {/* Optional policy/content sections block */}
+                        {('sections' in effectiveDefaults) && (
+                            <section className="space-y-6">
+                                <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                                    <h4 className="text-xs font-black text-slate-800 uppercase tracking-[0.2em]">Content Sections <span className="text-blue-500 ml-2">({(data.sections ?? []).length})</span></h4>
+                                    <button onClick={addSection} className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-[10px] font-black uppercase tracking-wider rounded-xl hover:bg-blue-700 transition-all shadow-md">
+                                        <Plus className="w-4 h-4" /> New Section
+                                    </button>
+                                </div>
+                                <div className="space-y-6">
+                                    {(data.sections ?? []).map((section: SectionItem, i: number) => (
+                                        <div key={i} className="border border-gray-200 rounded-2xl p-6 bg-gray-50/30 relative">
+                                            <button onClick={() => removeSection(i)} className="absolute top-5 right-5 flex items-center gap-1.5 text-red-400 hover:text-red-600 text-[10px] font-black uppercase tracking-wider"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pr-20">
+                                                <Field label="Section Heading" value={section.heading ?? ''} onChange={v => setSection(i, 'heading', v)} />
+                                                <Field label="Section Text" value={section.body ?? ''} onChange={v => setSection(i, 'body', v)} multiline />
+                                            </div>
+                                            <div className="mt-6 space-y-3">
+                                                <div className="flex items-center justify-between">
+                                                    <label className="block text-sm font-bold text-gray-700">Bullet Points</label>
+                                                    <button onClick={() => setSection(i, 'bullets', [...(section.bullets ?? []), 'New bullet'])} className="text-xs font-bold text-blue-600 hover:text-blue-800">+ Add bullet</button>
+                                                </div>
+                                                {(section.bullets ?? []).map((bullet, bulletIndex) => (
+                                                    <div key={bulletIndex} className="flex items-center gap-3">
+                                                        <input className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm" value={bullet} onChange={e => {
+                                                            const bullets = [...(section.bullets ?? [])]; bullets[bulletIndex] = e.target.value; setSection(i, 'bullets', bullets);
+                                                        }} />
+                                                        <button onClick={() => setSection(i, 'bullets', (section.bullets ?? []).filter((_, index) => index !== bulletIndex))} className="p-2 text-red-400 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     ))}

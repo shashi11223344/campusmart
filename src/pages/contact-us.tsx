@@ -1,8 +1,28 @@
 import { useState } from 'react';
-import { Phone, Mail, Clock, Send, MessageCircle } from 'lucide-react';
+import { Phone, Mail, Clock, Send, MessageCircle, type LucideIcon } from 'lucide-react';
 import api from '@/api/client';
+import { usePageData } from '@/hooks/usePageData';
+
+interface ContactInfoItem { title: string; content?: string; description?: string; icon: LucideIcon; }
+
+const subCategories: Record<string, string[]> = {
+  labs: ['Chemistry Lab', 'Physics Lab', 'Math Lab', 'Biology Lab', 'Composite Skill Lab', 'AI/ML Lab'],
+  techLabs: ['Computer Lab', 'AI Stations'],
+  innovationLabs: ['STEM Labs'],
+  furnitures: [
+    'Student Desks and Chairs', 'Teacher’s Desk and Chair', 'Storage Cabinets',
+    'Office Furniture', 'Lab Furniture', 'Library Furniture',
+    'Science Lab Tables', 'Lab Stools', 'Computer Desks', 'Reading Tables and Chairs',
+    'Bookshelves and Racks', 'Art and Craft / Music Tables', 'Principal and Staff Room Desks',
+    'Visitor Seating', 'Chairs', 'Stools', 'Almirah', 'Center Table', 'Sofa Table',
+    'Desk Bench', 'Lecture Stand', 'White Board', 'Open Book Shelves',
+  ],
+  innovation: ['Idea Lab', 'Entrepreneur Cell', 'Prototyping Lab'],
+  sportsTurfs: ['Football', 'Volley Ball', 'Cricket', 'Badminton', 'Tennis'],
+};
 
 const ContactUs = () => {
+  const { data } = usePageData('contact-us');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -10,8 +30,8 @@ const ContactUs = () => {
     collegeName: '',
     authorisedPerson: '',
     address: '',
-    coursesOffered: '',
-    subject: '',
+    category: '',
+    subCategory: '',
     message: '',
   });
 
@@ -28,8 +48,8 @@ const ContactUs = () => {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        subject: formData.subject,
-        message: `College / University: ${formData.collegeName}\nAuthorised Person: ${formData.authorisedPerson}\nAddress: ${formData.address}\nCourses Offered: ${formData.coursesOffered}\n\n${formData.message}`,
+        subject: formData.category,
+        message: `College / University: ${formData.collegeName}\nAuthorised Person: ${formData.authorisedPerson}\nAddress: ${formData.address}\nCategory: ${formData.category}\nSub-category: ${formData.subCategory || 'Not applicable'}\n\n${formData.message}`,
       });
       setSubmitted(true);
       setFormData({ 
@@ -39,8 +59,8 @@ const ContactUs = () => {
         collegeName: '',
         authorisedPerson: '',
         address: '',
-        coursesOffered: '',
-        subject: '', 
+        category: '',
+        subCategory: '',
         message: '' 
       });
     } catch {
@@ -50,7 +70,7 @@ const ContactUs = () => {
     }
   };
 
-  const contactInfo = [
+  const defaultContactInfo: ContactInfoItem[] = [
     {
       icon: Phone,
       title: 'Phone',
@@ -67,6 +87,11 @@ const ContactUs = () => {
       content: 'Monday - Friday: 9:00 AM - 6:00 PM\nSaturday: 10:00 AM - 4:00 PM',
     },
   ];
+  const contactInfo: ContactInfoItem[] = (data.cards?.length ? data.cards : defaultContactInfo).map((item: any, index: number) => ({
+    ...item,
+    icon: [Phone, Mail, Clock][index % 3],
+    content: item.description ?? item.content,
+  }));
 
   return (
     <main className="min-h-screen">
@@ -74,23 +99,19 @@ const ContactUs = () => {
       <section className="bg-cm-blue mx-3 sm:mx-6 lg:mx-8 rounded-[2rem] py-12 md:py-16 mt-4">
         <div className="w-full mx-auto px-2 sm:px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Contact Us
+            {data.heroTitle ?? 'Contact Us'}
           </h1>
           <p className="text-xl text-white/80 max-w-3xl mx-auto">
-            Have a question or need assistance? We're here to help. Reach out to us
-            through any of the channels below.
+            {data.heroSubtitle ?? "Have a question or need assistance? We're here to help. Reach out to us through any of the channels below."}
           </p>
         </div>
       </section>
 
-      <div className="w-full mx-auto px-2 sm:px-4 py-8">
-        <div className="flex flex-col gap-8">
+      <div className="w-full mx-auto px-2 sm:px-4">
+        <div className="flex flex-col">
           {/* Contact Form - Centered */}
           <div className="w-full max-w-2xl mx-auto">
             <div className="bg-white rounded-xl p-8 shadow-sm">
-              <h2 className="text-3xl font-bold text-cm-blue-dark mb-8 text-center">
-                Send us a Message
-              </h2>
               {submitted && (
                 <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
                   ✅ Thank you! Your message has been sent. We'll get back to you shortly.
@@ -163,17 +184,21 @@ const ContactUs = () => {
                     />
                   </div>
                   <div>
-                    <label className="form-label">Subject *</label>
+                    <label className="form-label">Category *</label>
                     <select
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      value={formData.category}
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value, subCategory: '' })}
                       className="form-input"
                       required
                     >
-                      <option value="">Select a subject</option>
-                      <option value="general">General Inquiry</option>
-                      <option value="sales">Sales</option>
-                      <option value="support">Technical Support</option>
+                      <option value="">Select a category</option>
+                      <option value="labs">Labs</option>
+                      <option value="techLabs">Tech Labs</option>
+                      <option value="innovationLabs">Innovation Labs</option>
+                      <option value="furnitures">Furnitures</option>
+                      <option value="innovation">Innovation</option>
+                      <option value="sportsTurfs">Sports Turfs</option>
+                      <option value="generalEnquiry">General Enquiry</option>
                       <option value="partnership">Partnership</option>
                       <option value="feedback">Feedback</option>
                     </select>
@@ -190,39 +215,22 @@ const ContactUs = () => {
                     required
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {subCategories[formData.category] && (
                   <div>
-                    <label className="form-label">Courses Offered</label>
+                    <label className="form-label">Sub-category *</label>
                     <select
-                      value={formData.coursesOffered}
-                      onChange={(e) => setFormData({ ...formData, coursesOffered: e.target.value })}
-                      className="form-input"
-                    >
-                      <option value="">Select Category</option>
-                      <option value="engineering">Engineering</option>
-                      <option value="medical">Medical</option>
-                      <option value="k12">K-12 School</option>
-                      <option value="degree">Degree College</option>
-                      <option value="others">Others</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="form-label">Subject *</label>
-                    <select
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                      value={formData.subCategory}
+                      onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}
                       className="form-input"
                       required
                     >
-                      <option value="">Select a subject</option>
-                      <option value="general">General Inquiry</option>
-                      <option value="sales">Sales</option>
-                      <option value="support">Technical Support</option>
-                      <option value="partnership">Partnership</option>
-                      <option value="feedback">Feedback</option>
+                      <option value="">Select a sub-category</option>
+                      {subCategories[formData.category].map((subCategory) => (
+                        <option key={subCategory} value={subCategory}>{subCategory}</option>
+                      ))}
                     </select>
                   </div>
-                </div>
+                )}
                 <div>
                   <label className="form-label">Message *</label>
                   <textarea

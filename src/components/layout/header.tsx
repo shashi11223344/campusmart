@@ -58,7 +58,7 @@ const MainHeader = () => {
     { label: 'Home', href: '/' },
     {
       label: 'Corporate',
-      href: '/about-us',
+      href: null, // dropdown only, no direct page navigation
       hasDropdown: true,
       dropdownItems: [
         { label: 'About Us', href: '/about-us' },

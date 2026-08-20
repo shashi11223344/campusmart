@@ -11,6 +11,13 @@ const PrivacyPolicy = () => {
           <h1 className="text-3xl font-bold text-cm-blue-dark mb-2">{heroTitle}</h1>
 
           <div className="space-y-6 text-gray-700">
+            {data.sections?.length ? data.sections.map((section: any) => (
+              <section key={section.heading}>
+                <h2 className="text-xl font-bold text-cm-blue-dark mb-3">{section.heading}</h2>
+                <p className="whitespace-pre-line">{section.body}</p>
+                {section.bullets?.length ? <ul className="list-disc pl-6 mt-2 space-y-1">{section.bullets.map((bullet: string) => <li key={bullet}>{bullet}</li>)}</ul> : null}
+              </section>
+            )) : <>
             <section>
               <h2 className="text-xl font-bold text-cm-blue-dark mb-3">1. Introduction</h2>
               <p>Campus Mart ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.</p>
@@ -72,8 +79,9 @@ const PrivacyPolicy = () => {
               <p className="mt-2">Email: privacy@campusmart.in</p>
               <p>Phone: +91 9966109191</p>
             </section>
+            </>}
 
-            <p className="text-sm text-gray-500 mt-8">Last updated: January 2025</p>
+            <p className="text-sm text-gray-500 mt-8">Last updated: {data.lastUpdated ?? 'January 2025'}</p>
           </div>
         </div>
       </div>

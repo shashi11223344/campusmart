@@ -11,6 +11,13 @@ const TermsOfUse = () => {
           <h1 className="text-3xl font-bold text-cm-blue-dark mb-2">{heroTitle}</h1>
 
           <div className="space-y-6 text-gray-700">
+            {data.sections?.length ? data.sections.map((section: any) => (
+              <section key={section.heading}>
+                <h2 className="text-xl font-bold text-cm-blue-dark mb-3">{section.heading}</h2>
+                <p className="whitespace-pre-line">{section.body}</p>
+                {section.bullets?.length ? <ul className="list-disc pl-6 mt-2 space-y-1">{section.bullets.map((bullet: string) => <li key={bullet}>{bullet}</li>)}</ul> : null}
+              </section>
+            )) : <>
             <section>
               <h2 className="text-xl font-bold text-cm-blue-dark mb-3">1. Acceptance of Terms</h2>
               <p>By accessing and using the Campus Mart website and services, you agree to be bound by these Terms of Use. If you do not agree to these terms, please do not use our services.</p>
@@ -68,8 +75,9 @@ const TermsOfUse = () => {
               <p className="mt-2">Email: legal@campusmart.in</p>
               <p>Phone: +91 9966109191</p>
             </section>
+            </>}
 
-            <p className="text-sm text-gray-500 mt-8">Last updated: January 2025</p>
+            <p className="text-sm text-gray-500 mt-8">Last updated: {data.lastUpdated ?? 'January 2025'}</p>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, useParams } from 'react-router-dom';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { SiteContentProvider } from '@/contexts/SiteContentContext';
 import api from '@/api/client';
@@ -76,8 +76,11 @@ function PageLoader() {
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const isAuthPage = ['/login', '/register', '/registration'].includes(location.pathname);
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={`min-h-screen flex flex-col ${isAuthPage ? 'auth-page-shell' : ''}`}>
       <TopBar />
       <Header />
       <CategoryBar />

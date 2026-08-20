@@ -377,6 +377,55 @@
   }
 }
 
+/* Compact page rhythm: reduce only oversized vertical utility spacing. */
+.py-12 { padding-block: 2.75rem; }
+.py-16 { padding-block: 3.5rem; }
+.py-20 { padding-block: 4.5rem; }
+.py-24 { padding-block: 5.5rem; }
+.py-32 { padding-block: 7rem; }
+.mt-16 { margin-top: 3.5rem; }
+.mb-16 { margin-bottom: 3.5rem; }
+.gap-16 { gap: 3.5rem; }
+
+@media (min-width: 640px) {
+  .sm\:py-16 { padding-block: 3.5rem; }
+  .sm\:py-20 { padding-block: 4.5rem; }
+}
+
+@media (min-width: 768px) {
+  .md\:py-16 { padding-block: 3.5rem; }
+  .md\:py-20 { padding-block: 4.5rem; }
+  .md\:py-24 { padding-block: 5.5rem; }
+}
+
+/* Compact hero typography on mobile; desktop typography remains untouched. */
+@media (max-width: 639px) {
+  .auth-page-shell > .top-bar,
+  .auth-page-shell > .main-header,
+  .auth-page-shell > .category-bar,
+  .auth-page-shell > footer {
+    display: none;
+  }
+
+  main > section:first-of-type h1.text-4xl,
+  main > section:first-of-type h1.text-5xl,
+  main > section:first-of-type h1.text-6xl {
+    font-size: 1.875rem;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+
+  main > section:first-of-type > div p.text-lg,
+  main > section:first-of-type > div p.text-xl {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  main > section:first-of-type h1[class~="mb-6"] {
+    margin-bottom: 0.75rem;
+  }
+}
+
 /* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
 

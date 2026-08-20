@@ -11,6 +11,13 @@ const PaymentPolicy = () => {
           <h1 className="text-3xl font-bold text-cm-blue-dark mb-6">{heroTitle}</h1>
 
           <div className="space-y-6 text-gray-700">
+            {data.sections?.length ? data.sections.map((section: any) => (
+              <section key={section.heading}>
+                <h2 className="text-xl font-bold text-cm-blue-dark mb-3">{section.heading}</h2>
+                <p className="whitespace-pre-line">{section.body}</p>
+                {section.bullets?.length ? <ul className="list-disc pl-6 mt-2 space-y-1">{section.bullets.map((bullet: string) => <li key={bullet}>{bullet}</li>)}</ul> : null}
+              </section>
+            )) : <>
             <section>
               <h2 className="text-xl font-bold text-cm-blue-dark mb-3">1. Payment Methods</h2>
               <p>We accept various payment methods including Credit/Debit Cards, Net Banking, and UPI through our secure payment gateway partners.</p>
@@ -30,8 +37,9 @@ const PaymentPolicy = () => {
               <h2 className="text-xl font-bold text-cm-blue-dark mb-3">4. Security</h2>
               <p>We do not store your credit card or sensitive financial information on our servers. All payments are handled by certified third-party payment processors.</p>
             </section>
+            </>}
 
-            <p className="text-sm text-gray-500 mt-8">Last updated: March 2024</p>
+            <p className="text-sm text-gray-500 mt-8">Last updated: {data.lastUpdated ?? 'March 2024'}</p>
           </div>
         </div>
       </div>

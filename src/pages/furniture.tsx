@@ -71,6 +71,9 @@ const Furniture = () => {
               <Link to="/shop" className="btn-secondary px-6 py-2.5 text-sm font-bold">
                 View Collections
               </Link>
+              <Link to="/request-quote" className="btn-secondary px-6 py-2.5 text-sm font-bold">
+                Get Quote
+              </Link>
             </div>
           </div>
           <div className="lg:w-1/2 relative">
