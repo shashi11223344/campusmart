@@ -45,7 +45,7 @@ const Partnership = () => {
             </div>
             <div>
               <label className="form-label">Email *</label>
-              <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="form-input" required />
+              <input type="email" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="form-input" required />
             </div>
             <div>
               <label className="form-label">Institution</label>

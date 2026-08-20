@@ -57,7 +57,7 @@ const Login = () => {
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
-                  required type="email"
+                  required type="email" pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
                   className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400"
                   placeholder="you@example.com"
                   value={formData.email}

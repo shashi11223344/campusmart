@@ -10,17 +10,26 @@ const router = Router();
 // GET /api/products
 router.get('/', async (req: Request, res: Response) => {
     try {
-        const { category, search, featured, page = '1', limit = '20' } = req.query;
+        const { category, search, featured, sort = 'newest', page = '1', limit = '20' } = req.query;
         const skip = (Number(page) - 1) * Number(limit);
         const where: Record<string, unknown> = { active: true };
         if (category && category !== 'all') {
             const cat = await prisma.category.findUnique({ where: { slug: String(category) } });
             if (cat) where.categoryId = cat.id;
         }
-        if (search) where.name = { contains: String(search) };
+        if (search) where.name = { contains: String(search), mode: 'insensitive' };
         if (featured === 'true') where.featured = true;
+        const orderBy = sort === 'price-asc'
+            ? { price: 'asc' as const }
+            : sort === 'price-desc'
+                ? { price: 'desc' as const }
+                : sort === 'name-asc'
+                    ? { name: 'asc' as const }
+                    : sort === 'popularity'
+                        ? { reviewCount: 'desc' as const }
+                        : { createdAt: 'desc' as const };
         const [products, total] = await Promise.all([
-            prisma.product.findMany({ where, include: { category: true }, skip, take: Number(limit), orderBy: { createdAt: 'desc' } }),
+            prisma.product.findMany({ where, include: { category: true }, skip, take: Number(limit), orderBy }),
             prisma.product.count({ where }),
         ]);
         res.json({ products, total, page: Number(page), limit: Number(limit) });

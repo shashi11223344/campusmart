@@ -103,7 +103,7 @@ const Registration = () => {
                 <label className="text-sm font-semibold text-gray-700">Email Address *</label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input required type="email" className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400"
+                  <input required type="email" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400"
                     placeholder="you@example.com" value={formData.email} onChange={set('email')} />
                 </div>
               </div>
@@ -127,13 +127,13 @@ const Registration = () => {
                   <label className="text-sm font-semibold text-gray-700">Phone</label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input type="tel" className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    <input type="tel" pattern="(?:\+91[ -]?)?[6-9][0-9]{9}" minLength={10} maxLength={14} className="w-full pl-10 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                       placeholder="9876543210" value={formData.phone} onChange={set('phone')} />
                   </div>
                 </div>
                 <div className="space-y-1">
                   <label className="text-sm font-semibold text-gray-700">Pincode</label>
-                  <input type="text" className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                  <input type="text" inputMode="numeric" pattern="[1-9][0-9]{5}" minLength={6} maxLength={6} className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                     placeholder="6-digit pincode" value={formData.pincode} onChange={set('pincode')} />
                 </div>
               </div>
@@ -177,6 +177,9 @@ const Registration = () => {
             <h2 className="text-xl font-bold text-gray-900 mb-1">Check your email</h2>
             <p className="text-sm text-gray-500 mb-2">We sent a 6-digit verification code to</p>
             <p className="font-semibold text-gray-900 mb-6">{formData.email}</p>
+            <p className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Please check your Spam or Junk folder if you don't see the OTP in your inbox.
+            </p>
 
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               <input

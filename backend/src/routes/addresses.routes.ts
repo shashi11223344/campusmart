@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import prisma from '../lib/prisma';
 import { verifyToken, AuthRequest } from '../middleware/auth.middleware';
+import { isValidPincode } from '../lib/validation';
 
 const router = Router();
 
@@ -18,6 +19,10 @@ router.get('/', verifyToken, async (req: AuthRequest, res: Response) => {
 router.post('/', verifyToken, async (req: AuthRequest, res: Response) => {
     try {
         const { type, line1, line2, city, state, pincode, isDefault } = req.body;
+        if (!type || !line1 || !city || !state || !isValidPincode(pincode)) {
+            res.status(400).json({ error: 'Please provide complete address details and a valid 6-digit pincode' });
+            return;
+        }
         const address = await prisma.address.create({
             data: { userId: req.user!.id, type, line1, line2, city, state, pincode, isDefault: false },
         });
@@ -30,6 +35,10 @@ router.post('/', verifyToken, async (req: AuthRequest, res: Response) => {
 router.put('/:id', verifyToken, async (req: AuthRequest, res: Response) => {
     try {
         const { type, line1, line2, city, state, pincode, isDefault } = req.body;
+        if (!type || !line1 || !city || !state || !isValidPincode(pincode)) {
+            res.status(400).json({ error: 'Please provide complete address details and a valid 6-digit pincode' });
+            return;
+        }
         const existing = await prisma.address.findFirst({ where: { id: Number(req.params.id), userId: req.user!.id } });
         if (!existing) { res.status(404).json({ error: 'Address not found' }); return; }
         const address = await prisma.address.update({

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { User, ShoppingBag, Heart, MapPin, CreditCard, LogOut, Edit, Package } from 'lucide-react';
+import { User, ShoppingBag, Heart, MapPin, CreditCard, LogOut, Edit, Package, Trash2, Plus, X } from 'lucide-react';
 import api from '@/api/client';
 
 interface WishlistItem {
@@ -25,6 +25,21 @@ interface Address {
   pincode: string;
 }
 
+interface PaymentMethod {
+  id: string;
+  type: 'card' | 'upi' | 'netbanking';
+  label: string;
+  detail: string;
+}
+
+interface Order {
+  id: number;
+  total: number;
+  status: string;
+  createdAt: string;
+  orderitem: { id: number; qty: number; product: { name: string } }[];
+}
+
 type AddressForm = Omit<Address, 'id'>;
 
 const emptyAddress: AddressForm = {
@@ -39,6 +54,10 @@ const emptyAddress: AddressForm = {
 const MyAccount = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const storedUser = localStorage.getItem('cm_user');
+  const currentUser = storedUser ? JSON.parse(storedUser) : null;
+  const isLoggedIn = !!localStorage.getItem('cm_token') && !!currentUser;
+  const paymentStorageKey = `cm_payment_methods_${currentUser?.id || currentUser?.email || 'user'}`;
   const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile');
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
@@ -49,10 +68,16 @@ const MyAccount = () => {
   const [addressFormOpen, setAddressFormOpen] = useState(false);
   const [addressSaving, setAddressSaving] = useState(false);
   const [addressError, setAddressError] = useState('');
-  const storedUser = localStorage.getItem('cm_user');
-  const currentUser = storedUser ? JSON.parse(storedUser) : null;
-  const isLoggedIn = !!localStorage.getItem('cm_token') && !!currentUser;
-
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [profileEditing, setProfileEditing] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileError, setProfileError] = useState('');
+  const [profileForm, setProfileForm] = useState({ name: currentUser?.name || '', phone: currentUser?.phone || '', institution: currentUser?.institution || '' });
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [paymentFormOpen, setPaymentFormOpen] = useState(false);
+  const [paymentForm, setPaymentForm] = useState({ type: 'card' as PaymentMethod['type'], holder: '', cardNumber: '', expiry: '', upiId: '', bankName: '' });
+  const [paymentError, setPaymentError] = useState('');
   const handleLogout = () => {
     localStorage.removeItem('cm_token');
     localStorage.removeItem('cm_user');
@@ -67,6 +92,19 @@ const MyAccount = () => {
       .catch(() => setWishlist([]))
       .finally(() => setWishlistLoading(false));
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    setOrdersLoading(true);
+    api.get('/orders')
+      .then(({ data }) => setOrders(data))
+      .catch(() => setOrders([]))
+      .finally(() => setOrdersLoading(false));
+    const storedMethods = localStorage.getItem(paymentStorageKey);
+    if (storedMethods) {
+      try { setPaymentMethods(JSON.parse(storedMethods)); } catch { setPaymentMethods([]); }
+    }
+  }, [isLoggedIn, paymentStorageKey]);
 
   useEffect(() => {
     if (!isLoggedIn || activeTab !== 'addresses') return;
@@ -106,18 +144,70 @@ const MyAccount = () => {
     }
   };
 
+  const saveProfile = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setProfileSaving(true);
+    setProfileError('');
+    try {
+      const { data } = await api.put('/auth/profile', profileForm);
+      localStorage.setItem('cm_user', JSON.stringify(data));
+      setProfileEditing(false);
+      window.location.reload();
+    } catch (err: any) {
+      setProfileError(err.response?.data?.error || 'Profile update failed.');
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
+  const savePaymentMethods = (methods: PaymentMethod[]) => {
+    setPaymentMethods(methods);
+    localStorage.setItem(paymentStorageKey, JSON.stringify(methods));
+  };
+
+  const addPaymentMethod = (event: React.FormEvent) => {
+    event.preventDefault();
+    setPaymentError('');
+    let detail = '';
+    let label = '';
+    if (paymentForm.type === 'card') {
+      const digits = paymentForm.cardNumber.replace(/\D/g, '');
+      if (digits.length < 12 || digits.length > 19 || !paymentForm.holder || !/^\d{2}\/\d{2}$/.test(paymentForm.expiry)) {
+        setPaymentError('Enter a valid cardholder name, card number, and expiry in MM/YY format.');
+        return;
+      }
+      label = 'Card';
+      detail = `•••• ${digits.slice(-4)} · ${paymentForm.expiry}`;
+    } else if (paymentForm.type === 'upi') {
+      if (!/^[\w.-]+@[\w.-]+$/.test(paymentForm.upiId)) {
+        setPaymentError('Enter a valid UPI ID, for example name@bank.');
+        return;
+      }
+      label = 'UPI';
+      detail = paymentForm.upiId;
+    } else {
+      if (!paymentForm.bankName.trim()) {
+        setPaymentError('Enter a bank name.');
+        return;
+      }
+      label = 'Net Banking';
+      detail = paymentForm.bankName.trim();
+    }
+    savePaymentMethods([...paymentMethods, { id: crypto.randomUUID(), type: paymentForm.type, label, detail }]);
+    setPaymentForm({ type: 'card', holder: '', cardNumber: '', expiry: '', upiId: '', bankName: '' });
+    setPaymentFormOpen(false);
+  };
+
+  const removePaymentMethod = (id: string) => {
+    savePaymentMethods(paymentMethods.filter((method) => method.id !== id));
+  };
+
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'orders', label: 'My Orders', icon: ShoppingBag },
     { id: 'wishlist', label: 'Wishlist', icon: Heart },
     { id: 'addresses', label: 'Addresses', icon: MapPin },
     { id: 'payment', label: 'Payment Methods', icon: CreditCard },
-  ];
-
-  const orders = [
-    { id: 'ORD001', date: '2024-01-15', total: 45000, status: 'Delivered', items: 3 },
-    { id: 'ORD002', date: '2024-01-10', total: 125000, status: 'Processing', items: 1 },
-    { id: 'ORD003', date: '2023-12-28', total: 28000, status: 'Delivered', items: 2 },
   ];
 
   const openNewAddressForm = () => {
@@ -246,12 +336,20 @@ const MyAccount = () => {
               <div className="bg-white rounded-xl p-8 shadow-card">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-cm-blue-dark">Profile Information</h2>
-                  <button className="flex items-center gap-2 text-cm-blue hover:underline">
+                  <button onClick={() => { setProfileEditing(true); setProfileForm({ name: currentUser?.name || '', phone: currentUser?.phone || '', institution: currentUser?.institution || '' }); }} className="flex items-center gap-2 text-cm-blue hover:underline">
                     <Edit className="w-4 h-4" />
                     Edit
                   </button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {profileError && <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">{profileError}</div>}
+                {profileEditing ? (
+                  <form onSubmit={saveProfile} className="space-y-4">
+                    <input required value={profileForm.name} onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })} className="form-input" placeholder="Full name" />
+                    <input value={profileForm.phone} onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })} className="form-input" placeholder="Phone" pattern="(?:\+91[ -]?)?[6-9][0-9]{9}" minLength={10} maxLength={14} />
+                    <input value={profileForm.institution} onChange={(e) => setProfileForm({ ...profileForm, institution: e.target.value })} className="form-input" placeholder="Institution" />
+                    <div className="flex gap-3"><button type="submit" disabled={profileSaving} className="btn-primary disabled:opacity-60">{profileSaving ? 'Saving...' : 'Save Changes'}</button><button type="button" onClick={() => setProfileEditing(false)} className="px-4 py-2 text-sm text-gray-600">Cancel</button></div>
+                  </form>
+                ) : <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="text-sm text-gray-500">Full Name</label>
                     <p className="font-semibold text-cm-blue-dark">{currentUser?.name || '—'}</p>
@@ -268,24 +366,24 @@ const MyAccount = () => {
                     <label className="text-sm text-gray-500">Institution</label>
                     <p className="font-semibold text-cm-blue-dark">{currentUser?.institution || '—'}</p>
                   </div>
-                </div>
+                </div>}
               </div>
             )}
 
             {activeTab === 'orders' && (
               <div className="bg-white rounded-xl p-8 shadow-card">
                 <h2 className="text-xl font-bold text-cm-blue-dark mb-6">My Orders</h2>
-                <div className="space-y-4">
+                {ordersLoading ? <p className="text-sm text-gray-500">Loading orders...</p> : orders.length === 0 ? <div className="py-12 text-center"><Package className="mx-auto mb-4 h-12 w-12 text-gray-300" /><p className="text-gray-600">No orders yet.</p><p className="mt-2 text-sm text-gray-500">Completed orders will appear here after checkout.</p></div> : <div className="space-y-4">
                   {orders.map((order) => (
                     <div key={order.id} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-4">
                         <div>
-                          <p className="font-bold text-cm-blue-dark">{order.id}</p>
-                          <p className="text-sm text-gray-500">{order.date}</p>
+                          <p className="font-bold text-cm-blue-dark">Order #{order.id}</p>
+                          <p className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleDateString('en-IN')}</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-cm-blue">₹{order.total.toLocaleString()}</p>
-                          <span className={`text-sm px-2 py-1 rounded-full ${order.status === 'Delivered'
+                          <p className="font-bold text-cm-blue">₹{order.total.toLocaleString('en-IN')}</p>
+                          <span className={`text-sm px-2 py-1 rounded-full ${order.status === 'delivered'
                             ? 'bg-green-100 text-green-700'
                             : 'bg-yellow-100 text-yellow-700'
                             }`}>
@@ -295,11 +393,11 @@ const MyAccount = () => {
                       </div>
                       <div className="flex items-center gap-4 text-sm text-gray-600">
                         <Package className="w-4 h-4" />
-                        {order.items} items
+                        {order.orderitem.reduce((total, item) => total + item.qty, 0)} items
                       </div>
                     </div>
                   ))}
-                </div>
+                </div>}
               </div>
             )}
 
@@ -349,7 +447,7 @@ const MyAccount = () => {
                   <form onSubmit={saveAddress} className="mb-6 border rounded-lg p-4 space-y-4 bg-gray-50">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <input required value={addressForm.type} onChange={(e) => setAddressForm({ ...addressForm, type: e.target.value })} className="form-input" placeholder="Label (Home, Office...)" />
-                      <input required value={addressForm.pincode} onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value })} className="form-input" placeholder="Pincode" />
+                      <input required inputMode="numeric" pattern="[1-9][0-9]{5}" minLength={6} maxLength={6} value={addressForm.pincode} onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) })} className="form-input" placeholder="6-digit pincode" />
                     </div>
                     <input required value={addressForm.line1} onChange={(e) => setAddressForm({ ...addressForm, line1: e.target.value })} className="form-input" placeholder="Address line 1" />
                     <input value={addressForm.line2 || ''} onChange={(e) => setAddressForm({ ...addressForm, line2: e.target.value })} className="form-input" placeholder="Address line 2 (optional)" />
@@ -388,15 +486,23 @@ const MyAccount = () => {
               <div className="bg-white rounded-xl p-8 shadow-card">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-cm-blue-dark">Payment Methods</h2>
-                  <button className="btn-primary text-sm">Add New Card</button>
+                  <button onClick={() => { setPaymentError(''); setPaymentFormOpen(true); }} className="btn-primary text-sm inline-flex items-center gap-2"><Plus className="h-4 w-4" />Add Payment Method</button>
                 </div>
-                <div className="text-center py-12">
+                {paymentFormOpen && <form onSubmit={addPaymentMethod} className="mb-6 rounded-lg border bg-gray-50 p-4 space-y-4">
+                  <div className="flex items-center justify-between"><h3 className="font-semibold text-cm-blue-dark">Add payment method</h3><button type="button" onClick={() => setPaymentFormOpen(false)} aria-label="Close payment form"><X className="h-4 w-4" /></button></div>
+                  <select value={paymentForm.type} onChange={(e) => setPaymentForm({ ...paymentForm, type: e.target.value as PaymentMethod['type'] })} className="form-input"><option value="card">Credit / Debit Card</option><option value="upi">UPI</option><option value="netbanking">Net Banking</option></select>
+                  {paymentForm.type === 'card' && <><input required value={paymentForm.holder} onChange={(e) => setPaymentForm({ ...paymentForm, holder: e.target.value })} className="form-input" placeholder="Cardholder name" /><input required inputMode="numeric" value={paymentForm.cardNumber} onChange={(e) => setPaymentForm({ ...paymentForm, cardNumber: e.target.value.replace(/\D/g, '').slice(0, 19) })} className="form-input" placeholder="Card number" /><input required value={paymentForm.expiry} onChange={(e) => setPaymentForm({ ...paymentForm, expiry: e.target.value.replace(/[^\d/]/g, '').slice(0, 5) })} className="form-input" placeholder="Expiry MM/YY" /></>}
+                  {paymentForm.type === 'upi' && <input required value={paymentForm.upiId} onChange={(e) => setPaymentForm({ ...paymentForm, upiId: e.target.value })} className="form-input" placeholder="name@bank" />}
+                  {paymentForm.type === 'netbanking' && <input required value={paymentForm.bankName} onChange={(e) => setPaymentForm({ ...paymentForm, bankName: e.target.value })} className="form-input" placeholder="Bank name" />}
+                  {paymentError && <p className="text-sm text-red-600">{paymentError}</p>}<button type="submit" className="btn-primary">Save Payment Method</button>
+                </form>}
+                {paymentMethods.length === 0 && !paymentFormOpen ? <div className="text-center py-12">
                   <CreditCard className="w-16 h-16 mx-auto mb-4 text-gray-300" />
                   <p className="text-gray-600">No saved payment methods</p>
                   <p className="text-sm text-gray-500 mt-2">
-                    Add a card for faster checkout
+                    Add a card, UPI ID, or net banking account for faster checkout
                   </p>
-                </div>
+                </div> : <div className="space-y-3">{paymentMethods.map((method) => <div key={method.id} className="flex items-center justify-between rounded-lg border p-4"><div className="flex items-center gap-3"><CreditCard className="h-5 w-5 text-cm-blue" /><div><p className="font-semibold text-cm-blue-dark">{method.label}</p><p className="text-sm text-gray-500">{method.detail}</p></div></div><button onClick={() => removePaymentMethod(method.id)} aria-label={`Remove ${method.label}`} className="text-red-600 hover:text-red-700"><Trash2 className="h-4 w-4" /></button></div>)}</div>}
               </div>
             )}
           </div>

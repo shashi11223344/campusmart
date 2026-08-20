@@ -29,6 +29,7 @@ const RequestQuote = () => {
         email: formData.email,
         phone: formData.phone,
         institution: formData.collegeName,
+        pincode: formData.pincode,
         items: `Authorised Person: ${formData.authorisedPerson}\nPincode: ${formData.pincode}\nBudget: ${formData.budget || 'Not specified'}\nTimeline: ${formData.timeline || 'Not specified'}`,
         message: `Address: ${formData.address}\nRequirements: ${formData.requirement}`,
       });
@@ -82,17 +83,17 @@ const RequestQuote = () => {
               </div>
               <div>
                 <label className="form-label">Email *</label>
-                <input type="email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="form-input" placeholder="your@email.com" required />
+                <input type="email" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="form-input" placeholder="your@email.com" required />
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="form-label">Phone *</label>
-                <input type="tel" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="form-input" placeholder="+91" required />
+                <input type="tel" pattern="(?:\+91[ -]?)?[6-9][0-9]{9}" minLength={10} maxLength={14} value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="form-input" placeholder="+91 98765 43210" required />
               </div>
               <div>
                 <label className="form-label">Pincode *</label>
-                <input type="text" value={formData.pincode} onChange={(e) => setFormData({...formData, pincode: e.target.value})} className="form-input" placeholder="6-digit pincode" required />
+                <input type="text" inputMode="numeric" pattern="[1-9][0-9]{5}" minLength={6} maxLength={6} value={formData.pincode} onChange={(e) => setFormData({...formData, pincode: e.target.value.replace(/\D/g, '').slice(0, 6)})} className="form-input" placeholder="6-digit pincode" required />
               </div>
             </div>
             <div>

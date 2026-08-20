@@ -94,7 +94,7 @@ const Furniture = () => {
             {cards.map((cat) => (
               <Link 
                 key={cat.title} 
-                to="/shop" 
+                to={`/shop?category=${cat.title.toLowerCase().includes('library') ? 'library' : 'furniture'}&search=${encodeURIComponent(cat.title.replace(/\s+furniture$/i, ''))}`}
                 className="group bg-white rounded-xl overflow-hidden shadow-[0_10px_30px_-20px_rgba(15,23,42,0.3)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_15px_40px_-15px_rgba(15,23,42,0.2)] border border-slate-200/70 flex flex-col min-h-[180px]"
               >
                 <div className="relative overflow-hidden aspect-[2/1.5]">

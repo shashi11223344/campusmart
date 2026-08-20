@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import prisma from '../lib/prisma';
 import { sendOtpEmail, generateOtp } from '../lib/email';
 import { verifyToken, AuthRequest } from '../middleware/auth.middleware';
+import { isValidEmail, isValidPhone, isValidPincode } from '../lib/validation';
 
 const router = Router();
 
@@ -25,6 +26,7 @@ router.post('/send-otp', async (req: Request, res: Response) => {
     try {
         const { email, purpose = 'verify' } = req.body;
         if (!email) { res.status(400).json({ error: 'Email is required' }); return; }
+        if (!isValidEmail(email)) { res.status(400).json({ error: 'Please enter a valid email address' }); return; }
 
         const normalizedEmail = normalizeEmail(email);
 
@@ -53,6 +55,7 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
     try {
         const { email, code, purpose = 'verify' } = req.body;
         if (!email || !code) { res.status(400).json({ error: 'Email and code are required' }); return; }
+        if (!isValidEmail(email)) { res.status(400).json({ error: 'Please enter a valid email address' }); return; }
 
         const normalizedEmail = normalizeEmail(email);
 
@@ -85,9 +88,25 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 // ─── POST /api/auth/register ─────────────────────────────────────────────────
 router.post('/register', async (req: Request, res: Response) => {
     try {
-        const { name, email, password, phone, institution } = req.body;
+        const { name, email, password, phone, institution, pincode } = req.body;
         if (!name || !email || !password) {
             res.status(400).json({ error: 'Name, email, and password are required' });
+            return;
+        }
+        if (!isValidEmail(email)) {
+            res.status(400).json({ error: 'Please enter a valid email address' });
+            return;
+        }
+        if (password.length < 6) {
+            res.status(400).json({ error: 'Password must be at least 6 characters' });
+            return;
+        }
+        if (phone && !isValidPhone(phone)) {
+            res.status(400).json({ error: 'Please enter a valid 10-digit Indian phone number' });
+            return;
+        }
+        if (pincode && !isValidPincode(pincode)) {
+            res.status(400).json({ error: 'Please enter a valid 6-digit pincode' });
             return;
         }
 
@@ -117,6 +136,7 @@ router.post('/login', async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) { res.status(400).json({ error: 'Email and password required' }); return; }
+        if (!isValidEmail(email)) { res.status(400).json({ error: 'Please enter a valid email address' }); return; }
 
         const normalizedEmail = normalizeEmail(email);
         const user = await prisma.user.findFirst({
@@ -155,6 +175,10 @@ router.get('/me', async (req: Request, res: Response) => {
 router.put('/profile', verifyToken, async (req: AuthRequest, res: Response) => {
     try {
         const { name, phone, institution } = req.body;
+        if (phone && !isValidPhone(phone)) {
+            res.status(400).json({ error: 'Please enter a valid 10-digit Indian phone number' });
+            return;
+        }
         const user = await prisma.user.update({
             where: { id: req.user!.id },
             data: { name, phone, institution },

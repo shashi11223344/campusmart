@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MessageCircle, Phone, Send } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import api from '@/api/client';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -10,9 +12,14 @@ const PartnershipForm = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
+    institution: '',
     message: '',
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -98,10 +105,25 @@ const PartnershipForm = () => {
     return () => ctx.revert();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      await api.post('/contact', {
+        name: formData.name,
+        email: formData.email,
+        institution: formData.institution,
+        subject: 'Partnership Enquiry',
+        message: formData.message,
+      });
+      setSubmitted(true);
+      setFormData({ name: '', email: '', institution: '', message: '' });
+    } catch {
+      setSubmitError('Failed to submit your enquiry. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -120,15 +142,41 @@ const PartnershipForm = () => {
             <p className="text-gray-600 mb-6">
               Please fill out the form and we'll get back to you as soon as possible.
             </p>
+            {submitted && (
+              <div className="mb-5 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+                Thank you. Your partnership enquiry has been submitted successfully.
+              </div>
+            )}
+            {submitError && (
+              <div className="mb-5 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+                {submitError}
+              </div>
+            )}
 
             <div className="space-y-5">
               <div className="form-field">
-                <label htmlFor="email" className="form-label">
+                <label htmlFor="partnership-name" className="form-label">
+                  Full Name <span className="text-cm-red">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="partnership-name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="form-input"
+                  placeholder="Your name"
+                  required
+                />
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="partnership-email" className="form-label">
                   Email <span className="text-cm-red">*</span>
                 </label>
                 <input
                   type="email"
-                  id="email"
+                  pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+                  id="partnership-email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="form-input"
@@ -138,24 +186,40 @@ const PartnershipForm = () => {
               </div>
 
               <div className="form-field">
-                <label htmlFor="message" className="form-label">
-                  Message
+                <label htmlFor="partnership-institution" className="form-label">
+                  Institution
+                </label>
+                <input
+                  type="text"
+                  id="partnership-institution"
+                  value={formData.institution}
+                  onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
+                  className="form-input"
+                  placeholder="Institution or organisation"
+                />
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="partnership-message" className="form-label">
+                  Message <span className="text-cm-red">*</span>
                 </label>
                 <textarea
-                  id="message"
+                  id="partnership-message"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="form-input min-h-[120px] resize-none"
                   placeholder="Tell us about your requirements..."
+                  required
                 />
               </div>
 
               <button
                 type="submit"
+                disabled={submitting}
                 className="btn-primary w-full flex items-center justify-center gap-2"
               >
                 <Send className="w-5 h-5" />
-                Submit Enquiry
+                {submitting ? 'Submitting...' : 'Submit Enquiry'}
               </button>
             </div>
           </form>
@@ -197,12 +261,12 @@ const PartnershipForm = () => {
               <p className="text-gray-600 text-sm mb-3">
                 Join with us as Influencers and be part of the campus transformation journey.
               </p>
-              <a
-                href="#"
+              <Link
+                to="/partnership"
                 className="text-cm-blue font-semibold text-sm hover:underline"
               >
                 View Open Positions →
-              </a>
+              </Link>
             </div>
           </div>
         </div>

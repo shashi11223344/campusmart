@@ -63,8 +63,8 @@ const ContactUs = () => {
         subCategory: '',
         message: '' 
       });
-    } catch {
-      setSubmitError('Failed to send message. Please try again.');
+    } catch (err: any) {
+      setSubmitError(err.response?.data?.error || 'Failed to send message. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -163,6 +163,7 @@ const ContactUs = () => {
                     <label className="form-label">Email Address *</label>
                     <input
                       type="email"
+                      pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="form-input"
@@ -176,6 +177,9 @@ const ContactUs = () => {
                     <label className="form-label">Phone Number *</label>
                     <input
                       type="tel"
+                      pattern="(?:\+91[ -]?)?[6-9][0-9]{9}"
+                      minLength={10}
+                      maxLength={14}
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                       className="form-input"
