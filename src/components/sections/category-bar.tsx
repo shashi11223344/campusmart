@@ -53,15 +53,15 @@ const CategoryBar = () => {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div
           ref={iconsRef}
-          className="grid grid-cols-3 items-start gap-x-2 gap-y-3 pt-3 pb-3 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 sm:pt-2 sm:pb-2 md:gap-6"
+          className="grid grid-cols-3 items-start gap-x-0 gap-y-2 pt-3 pb-3 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 sm:pt-2 sm:pb-2 md:gap-6"
         >
           {categories.map(({ icon: Icon, label, href }) => (
             <div key={label} className="relative group min-w-0 cursor-pointer shrink-0">
-              <Link to={href} className="flex flex-col items-center justify-center gap-1.5 px-1 hover:text-cm-blue transition-colors sm:px-2">
+              <Link to={href} className="flex flex-col items-center justify-center gap-1.5 px-0 hover:text-cm-blue transition-colors sm:px-2">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-50 text-gray-600 transition-all duration-300 group-hover:bg-blue-50 group-hover:text-cm-blue sm:h-12 sm:w-12 md:h-14 md:w-14">
                   <Icon className="h-5 w-5 sm:h-5 sm:w-5 md:h-7 md:w-7" />
                 </div>
-                <span className="text-[11px] leading-tight font-bold text-center text-gray-700 tracking-tight uppercase transition-colors group-hover:text-cm-blue sm:whitespace-nowrap sm:text-[12px] md:text-[14px]">
+                <span className="text-[12px] leading-tight font-bold text-center text-gray-700 tracking-tight uppercase transition-colors group-hover:text-cm-blue sm:whitespace-nowrap sm:text-[12px] md:text-[14px]">
                   {label}
                 </span>
 
